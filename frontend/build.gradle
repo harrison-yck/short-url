@@ -1,0 +1,6 @@
+project('website') {
+    dependencies {
+        implementation project(':frontend:website-interface')
+        implementation project(':backend:url-service-interface')
+    }
+}

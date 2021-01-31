@@ -1,0 +1,12 @@
+project('url-service') {
+    dependencies {
+        implementation project(':backend:url-service-interface')
+        implementation project(':frontend:website-interface')
+    }
+}
+
+project('scheduler-service') {
+    dependencies {
+        implementation project(':backend:url-service-interface')
+    }
+}

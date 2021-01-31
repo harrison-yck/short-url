@@ -1,0 +1,7 @@
+include 'backend:url-service'
+include 'backend:url-service-interface'
+include 'backend:url-service-db-migration'
+include 'backend:scheduler-service'
+
+include 'frontend:website'
+include 'frontend:website-interface'
