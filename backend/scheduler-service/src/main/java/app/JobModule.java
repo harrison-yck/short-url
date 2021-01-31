@@ -11,6 +11,6 @@ public class JobModule extends Module {
     @Override
     protected void initialize() {
         kafka().publish(UrlServiceTopic.CLEAR_URL_RECORD_REQUEST, ClearUrlRecordCommand.class);
-        schedule().monthlyAt("clear-url-record-job", bind(ClearUrlRecordJob.class), 1, LocalTime.MIDNIGHT);
+        schedule().dailyAt("clear-url-record-job", bind(ClearUrlRecordJob.class), LocalTime.MIDNIGHT);
     }
 }

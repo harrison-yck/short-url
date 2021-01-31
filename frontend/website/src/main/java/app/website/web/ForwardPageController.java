@@ -14,7 +14,7 @@ import core.framework.web.Response;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class ForwardPageController implements Controller {
-    private static final String FAILED_TEMPLATE = "/invalid.html";
+    private static final String FAILED_TEMPLATE = "/template/invalid.html";
 
     @Inject
     HTMLTemplateEngine htmlTemplateEngine;
@@ -27,7 +27,9 @@ public class ForwardPageController implements Controller {
         resolveRequest.url = request.path();
         ResolveUrlResponse resolvedResult = urlWebService.resolve(resolveRequest);
 
-        if (Strings.isBlank(resolvedResult.result)) {
+        System.out.println("redirect page");
+
+        if (resolvedResult.result != null) {
             return Response.bytes(htmlTemplateEngine.process(FAILED_TEMPLATE, new Object()).getBytes(UTF_8)).contentType(ContentType.TEXT_HTML);
         }
 

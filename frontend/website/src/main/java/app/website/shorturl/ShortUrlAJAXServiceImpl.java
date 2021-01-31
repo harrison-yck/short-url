@@ -10,17 +10,28 @@ import core.framework.inject.Inject;
 import core.framework.util.Strings;
 import core.framework.web.rate.LimitRate;
 
+import java.time.DayOfWeek;
+import java.time.MonthDay;
+
+import static app.api.shorturl.EncodeUrlAJAXRequest.Availability.*;
+
 public class ShortUrlAJAXServiceImpl implements ShortUrlAJAXService {
     @Inject
     UrlWebService urlWebService;
-//    @Inject
-//    Cache<ResolveUrlAJAXResponse> resolveUrlAJAXResponseCache;
 
     @Override
     @LimitRate("encode")
     public EncodeUrlAJAXResponse encode(EncodeUrlAJAXRequest request) {
         var encodeUrlRequest = new EncodeUrlRequest();
         encodeUrlRequest.url = request.url;
+
+        if (request.availability == ONE_DAY) {
+            encodeUrlRequest.lastForDays = 1;
+        } else if (request.availability == ONE_WEEK) {
+            encodeUrlRequest.lastForDays = 7;
+        } else {
+            throw new Error("unsupported operation, empty lastForDays");
+        }
 
         return encodeAjaxResponse(urlWebService.encode(encodeUrlRequest));
     }

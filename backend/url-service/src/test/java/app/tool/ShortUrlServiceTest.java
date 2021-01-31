@@ -1,6 +1,7 @@
 package app.tool;
 
 import app.IntegrationTest;
+import app.api.url.EncodeUrlRequest;
 import core.framework.inject.Inject;
 import org.junit.jupiter.api.Test;
 
@@ -12,9 +13,11 @@ public class ShortUrlServiceTest extends IntegrationTest {
 
     @Test
     void same() {
-        String url = "google.com";
-        String encodedUrl = shortUrlService.encode(url);
-        String decodedUrl = shortUrlService.decode(encodedUrl);
-        assertThat(url).isEqualTo(decodedUrl);
+        var request = new EncodeUrlRequest();
+        request.url = "google.com";
+        request.lastForDays = 7;
+
+        String encodedUrl = shortUrlService.encode(request);
+        assertThat(shortUrlService.decode(encodedUrl)).get().satisfies(decodedUrl -> assertThat(decodedUrl).isEqualTo(request.url));
     }
 }

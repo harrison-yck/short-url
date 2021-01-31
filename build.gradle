@@ -15,14 +15,7 @@ subprojects {
 }
 
 def coreNGVersion = '7.6.10'
-def mysqlVersion = '8.0.22'
-
-configure([project(':backend:url-service')]) {
-    dependencies {
-        runtimeOnly "mysql:mysql-connector-java:${mysqlVersion}"
-        testRuntimeOnly 'org.hsqldb:hsqldb:2.5.1'
-    }
-}
+def mongoVersion = '7.6.3'
 
 configure(subprojects.findAll { it.name.endsWith('-interface') }) {
     apply from: file("${rootDir}/gradle/lib.gradle")
@@ -45,8 +38,9 @@ configure([project(":frontend:website")] + subprojects.findAll { it.name.endsWit
     dependencies {
         implementation "core.framework:core-ng:${coreNGVersion}"
         implementation "core.framework:core-ng-test:${coreNGVersion}"
-        testImplementation "core.framework:core-ng-mongo:${coreNGVersion}"
-        testImplementation "core.framework:core-ng-mongo-test:${coreNGVersion}"
+
+        implementation "core.framework:core-ng-mongo:${mongoVersion}"
+        implementation "core.framework:core-ng-mongo-test:${mongoVersion}"
     }
 }
 
