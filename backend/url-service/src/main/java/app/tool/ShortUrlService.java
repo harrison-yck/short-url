@@ -2,32 +2,32 @@ package app.tool;
 
 import app.api.url.EncodeUrlRequest;
 import app.entity.ShortUrlEntity;
-import com.mongodb.client.model.Filters;
 import core.framework.inject.Inject;
-import core.framework.mongo.Mongo;
 import core.framework.mongo.MongoCollection;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
-import java.util.Base64;
 import java.util.Base64.Encoder;
 import java.util.Optional;
 
-import static java.util.Base64.*;
+import static core.framework.crypto.Hash.md5Hex;
+import static java.util.Base64.getUrlEncoder;
 
 public class ShortUrlService {
-    private static final Encoder ENCODER = getUrlEncoder().withoutPadding(); // TODO change to key-based
+    private static final Encoder ENCODER = getUrlEncoder().withoutPadding();
 
     @Inject
     MongoCollection<ShortUrlEntity> collection;
 
-    // TODO also include api key to encode
     public String encode(EncodeUrlRequest request) {
-        return insert(request.url, request.lastForDays);
+        return insert(request.url, request.randomStr, request.lastForDays);
     }
 
-    private String insert(String rawUrl, Integer lastForDays) {
-        String encodedUrl = ENCODER.encodeToString(rawUrl.getBytes(StandardCharsets.UTF_8));
+    private String insert(String rawUrl, String randomStr, Integer lastForDays) {
+        if (randomStr == null) return "";
+
+        String concatString = rawUrl + randomStr;
+        String encodedUrl = ENCODER.encodeToString(md5Hex(concatString.getBytes(StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
 
         var entity = new ShortUrlEntity();
         entity.originalUrl = rawUrl;

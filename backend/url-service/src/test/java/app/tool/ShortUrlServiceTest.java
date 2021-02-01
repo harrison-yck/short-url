@@ -15,6 +15,7 @@ public class ShortUrlServiceTest extends IntegrationTest {
     void same() {
         var request = new EncodeUrlRequest();
         request.url = "google.com";
+        request.randomStr = "abc";
         request.lastForDays = 7;
 
         String encodedUrl = shortUrlService.encode(request);

@@ -6,7 +6,6 @@ import app.api.url.ResolveUrlResponse;
 import core.framework.http.ContentType;
 import core.framework.inject.Inject;
 import core.framework.template.HTMLTemplateEngine;
-import core.framework.util.Strings;
 import core.framework.web.Controller;
 import core.framework.web.Request;
 import core.framework.web.Response;
@@ -33,6 +32,6 @@ public class ForwardPageController implements Controller {
             return Response.bytes(htmlTemplateEngine.process(FAILED_TEMPLATE, new Object()).getBytes(UTF_8)).contentType(ContentType.TEXT_HTML);
         }
 
-        return Response.redirect(resolvedResult.result);
+        return Response.redirect(FAILED_TEMPLATE);
     }
 }

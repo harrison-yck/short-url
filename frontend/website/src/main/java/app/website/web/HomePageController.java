@@ -18,7 +18,6 @@ public class HomePageController {
     }
 
     public Response index(Request request) {
-        System.out.println("index page");
         return Response.bytes(Files.bytes(HOMEPAGE)).contentType(ContentType.TEXT_HTML);
     }
 }
