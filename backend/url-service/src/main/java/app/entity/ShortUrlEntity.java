@@ -3,7 +3,6 @@ package app.entity;
 import core.framework.mongo.Collection;
 import core.framework.mongo.Field;
 import core.framework.mongo.Id;
-import org.bson.types.ObjectId;
 
 import java.time.ZonedDateTime;
 

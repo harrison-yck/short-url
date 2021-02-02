@@ -2,13 +2,17 @@ package app.tool;
 
 import app.api.url.EncodeUrlRequest;
 import app.entity.ShortUrlEntity;
+import com.mongodb.client.model.Filters;
 import core.framework.inject.Inject;
 import core.framework.mongo.MongoCollection;
+import core.framework.mongo.Query;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Base64.Encoder;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static core.framework.crypto.Hash.md5Hex;
 import static java.util.Base64.getUrlEncoder;
@@ -42,5 +46,13 @@ public class ShortUrlService {
     public Optional<String> decode(String encodedUrl) {
         Optional<ShortUrlEntity> optionalEntity = collection.get(encodedUrl);
         return optionalEntity.map(shortUrlEntity -> shortUrlEntity.originalUrl);
+    }
+
+    public List<String> removeExpiredUrl() {
+        var query = new Query();
+        query.filter = Filters.lte("expiration_time", ZonedDateTime.now());
+        List<String> encodedUrls = collection.find(query).stream().map(entity -> entity.encodedUrl).collect(Collectors.toList());
+        collection.bulkDelete(encodedUrls);
+        return encodedUrls;
     }
 }
