@@ -15,21 +15,11 @@ public class TrackingInterceptor implements Interceptor {
         Request request = invocation.context().request();
         Response response = invocation.proceed();
 
-        Optional<String> cookie = request.cookie(Cookies.RANDOM_ID);
-        String randomId = cookie.orElseGet(this::createId);
-
-        if (cookie.isEmpty()) {
-            response.cookie(new CookieSpec(Cookies.RANDOM_ID.name).secure().sameSite().maxAge(Cookies.RANDOM_ID.maxAge), randomId);
-        }
-
-        if (request.session().get(Cookies.RANDOM_ID.name).isEmpty()) {
-            request.session().set(Cookies.RANDOM_ID.name, randomId);
-        }
-
+        if (request.session().get("RANDOM_ID").isEmpty()) request.session().set("RANDOM_ID", randomId());
         return response;
     }
 
-    private String createId() {
+    private String randomId() {
         return UUID.randomUUID().toString();
     }
 }

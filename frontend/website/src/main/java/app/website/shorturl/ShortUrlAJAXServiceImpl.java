@@ -8,7 +8,6 @@ import app.api.url.EncodeUrlRequest;
 import app.api.url.EncodeUrlResponse;
 import app.website.web.Cookies;
 import core.framework.inject.Inject;
-import core.framework.util.Strings;
 import core.framework.web.WebContext;
 import core.framework.web.exception.BadRequestException;
 import core.framework.web.rate.LimitRate;
@@ -27,7 +26,6 @@ public class ShortUrlAJAXServiceImpl implements ShortUrlAJAXService {
     public EncodeUrlAJAXResponse encode(EncodeUrlAJAXRequest request) {
         var encodeUrlRequest = new EncodeUrlRequest();
         encodeUrlRequest.url = request.url;
-        encodeUrlRequest.randomStr = webContext.request().session().get(Cookies.RANDOM_ID.name).orElseThrow(() -> new BadRequestException("Please enable cookie"));
 
         if (request.availability == ONE_DAY) {
             encodeUrlRequest.lastForDays = 1;
@@ -36,14 +34,17 @@ public class ShortUrlAJAXServiceImpl implements ShortUrlAJAXService {
         } else {
             throw new Error("unsupported operation, empty lastForDays");
         }
+        EncodeUrlResponse response = urlWebService.encode(encodeUrlRequest);
 
-        return encodeAjaxResponse(urlWebService.encode(encodeUrlRequest));
+//        webContext.request().cookie(Cookies.URLS).;
+
+        return encodeAjaxResponse(response);
     }
 
-    private EncodeUrlAJAXResponse encodeAjaxResponse(EncodeUrlResponse encode) {
+    private EncodeUrlAJAXResponse encodeAjaxResponse(EncodeUrlResponse encodeResponse) {
         var response = new EncodeUrlAJAXResponse();
-        response.result = encode.result;
-        response.success = Strings.isBlank(encode.result) ? Boolean.TRUE : Boolean.FALSE;
+        response.success = encodeResponse.encodedUrl != null ? Boolean.TRUE : Boolean.FALSE;
+        response.result = response.success ? encodeResponse.encodedUrl : null;
         return response;
     }
 }

@@ -5,9 +5,12 @@ import app.api.url.EncodeUrlRequest;
 import app.api.url.EncodeUrlResponse;
 import app.api.url.ResolveUrlRequest;
 import app.api.url.ResolveUrlResponse;
+import app.entity.ShortUrlEntity;
 import app.tool.ShortUrlService;
 import core.framework.cache.Cache;
 import core.framework.inject.Inject;
+import core.framework.util.Strings;
+import core.framework.web.rate.LimitRate;
 
 public class UrlWebServiceImpl implements UrlWebService {
     @Inject
@@ -17,15 +20,21 @@ public class UrlWebServiceImpl implements UrlWebService {
 
     @Override
     public EncodeUrlResponse encode(EncodeUrlRequest request) {
-        return encoded(shortUrlService.encode(request));
+        return toResponse(shortUrlService.encode(request));
     }
 
-    private EncodeUrlResponse encoded(String encodedUrl) {
+    private EncodeUrlResponse toResponse(ShortUrlEntity shortUrlEntity) {
         var response = new EncodeUrlResponse();
-        response.result = encodedUrl;
+
+        if (Strings.isBlank(shortUrlEntity.encodedUrl)) return null;
+        response.encodedUrl = shortUrlEntity.encodedUrl;
+        response.originalUrl = shortUrlEntity.originalUrl;
+        response.createdTime = shortUrlEntity.createdTime;
+        response.expirationTime = shortUrlEntity.expirationTime;
         return response;
     }
 
+    @LimitRate("resolve")
     @Override
     public ResolveUrlResponse resolve(ResolveUrlRequest request) {
         return resolveUrlResponseCache.get(request.url, key -> {

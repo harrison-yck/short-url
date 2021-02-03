@@ -9,10 +9,6 @@ public class EncodeUrlRequest {
     public String url;
 
     @NotNull
-    @Property(name = "randomStr")
-    public String randomStr;
-
-    @NotNull
     @Property(name = "lastForDays")
     public Integer lastForDays;
 }

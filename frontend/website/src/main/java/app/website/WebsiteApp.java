@@ -37,8 +37,6 @@ public class WebsiteApp extends App {
         site().staticContent("/robots.txt");
 
         http().limitRate().add("encode", 1, 1, TimeUnit.SECONDS);
-        http().limitRate().add("resolve", 5, 1, TimeUnit.SECONDS);
-
         http().intercept(bind(TrackingInterceptor.class));
     }
 }

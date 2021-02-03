@@ -13,6 +13,7 @@ import core.framework.module.SystemModule;
 import core.framework.mongo.module.MongoConfig;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 public class ShortUrlApp extends App {
     @Override
@@ -26,6 +27,8 @@ public class ShortUrlApp extends App {
         mongo.collection(ShortUrlEntity.class);
 
         bind(ShortUrlService.class);
+
+        http().limitRate().add("resolve", 50, 1, TimeUnit.SECONDS);
 
         kafka().subscribe(UrlServiceTopic.CLEAR_URL_RECORD_REQUEST, ClearUrlRecordCommand.class, bind(ClearUrlRecordCommandHandler.class));
         api().service(UrlWebService.class, bind(UrlWebServiceImpl.class));
