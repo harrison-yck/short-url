@@ -2,7 +2,6 @@ package app.website;
 
 import app.website.web.ForwardPageController;
 import app.website.web.HomePageController;
-import app.website.web.TrackingInterceptor;
 import core.framework.module.App;
 import core.framework.module.SystemModule;
 import core.framework.template.HTMLTemplateEngine;
@@ -37,6 +36,5 @@ public class WebsiteApp extends App {
         site().staticContent("/robots.txt");
 
         http().limitRate().add("encode", 1, 1, TimeUnit.SECONDS);
-        http().intercept(bind(TrackingInterceptor.class));
     }
 }
