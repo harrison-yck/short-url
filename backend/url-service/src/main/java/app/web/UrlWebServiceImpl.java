@@ -39,7 +39,7 @@ public class UrlWebServiceImpl implements UrlWebService {
     public ResolveUrlResponse resolve(ResolveUrlRequest request) {
         return resolveUrlResponseCache.get(request.url, key -> {
             var response = new ResolveUrlResponse();
-            response.result = shortUrlService.decode(key).isPresent() ? shortUrlService.decode(key).get() : null;
+            response.result = shortUrlService.findUrl(key).isPresent() ? shortUrlService.findUrl(key).get() : null;
             return response;
         });
     }
