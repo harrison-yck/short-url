@@ -1,6 +1,13 @@
+project('key-generation-service') {
+    dependencies {
+        implementation project(':backend:key-generation-service-interface')
+    }
+}
+
 project('url-service') {
     dependencies {
         implementation project(':backend:url-service-interface')
+        implementation project(':backend:key-generation-service-interface')
         implementation project(':frontend:website-interface')
     }
 }

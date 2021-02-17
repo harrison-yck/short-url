@@ -1,5 +1,6 @@
-package app.tool;
+package app.service;
 
+import app.api.KeyGenerationWebService;
 import app.api.url.EncodeUrlRequest;
 import app.entity.ShortUrlEntity;
 import com.mongodb.client.model.Filters;
@@ -16,34 +17,23 @@ import java.util.stream.Collectors;
 
 
 public class ShortUrlService {
-    public static final String NON_AMBIGUOUS_ALPHABET = "23456789bcdfghjkmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ-_";
-    public static final int TOTAL_ALPHABET = NON_AMBIGUOUS_ALPHABET.length();
-
     @Inject
     MongoCollection<ShortUrlEntity> collection;
+    @Inject
+    KeyGenerationWebService keyGenerationWebService;
 
-    public ShortUrlEntity encode(EncodeUrlRequest request) {
-        return insert(request.url, request.lastForDays);
-    }
-
-    ShortUrlEntity insert(String rawUrl, Integer lastForDays) {
+    public ShortUrlEntity getEncodedUrl(EncodeUrlRequest request) {
         var entity = new ShortUrlEntity();
         entity.id = new ObjectId();
-        entity.originalUrl = rawUrl;
-        entity.encodedUrl = encode(entity.id.hashCode());
+        entity.originalUrl = request.url;
+        entity.encodedUrl = getEncodedUrl();
         entity.createdTime = ZonedDateTime.now();
-        entity.expirationTime = entity.createdTime.plusDays(lastForDays);
         collection.insert(entity);
         return entity;
     }
 
-    private String encode(int num) {
-        StringBuilder str = new StringBuilder();
-        while (num > 0) {
-            str.insert(0, NON_AMBIGUOUS_ALPHABET.charAt(num % TOTAL_ALPHABET));
-            num = num / TOTAL_ALPHABET;
-        }
-        return str.toString();
+    private String getEncodedUrl() {
+        return keyGenerationWebService.getKey();
     }
 
     public Optional<String> findUrl(String encodedUrl) {

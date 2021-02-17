@@ -6,7 +6,7 @@ import app.api.url.kafka.ClearUrlRecordCommand;
 import app.api.url.kafka.UrlServiceTopic;
 import app.entity.ShortUrlEntity;
 import app.kafka.ClearUrlRecordCommandHandler;
-import app.tool.ShortUrlService;
+import app.service.ShortUrlService;
 import app.web.UrlWebServiceImpl;
 import core.framework.module.App;
 import core.framework.module.SystemModule;
@@ -20,10 +20,10 @@ public class ShortUrlApp extends App {
     protected void initialize() {
         load(new SystemModule("sys.properties"));
 
-        cache().add(ResolveUrlResponse.class, Duration.ofHours(1));
+        cache().add(ResolveUrlResponse.class, Duration.ofDays(30));
 
         MongoConfig mongo = config(MongoConfig.class);
-        mongo.uri("mongodb://localhost:27017/test");
+        mongo.uri("mongodb://localhost:27017/shortUrl");
         mongo.collection(ShortUrlEntity.class);
 
         bind(ShortUrlService.class);

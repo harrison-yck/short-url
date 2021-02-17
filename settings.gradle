@@ -1,6 +1,9 @@
 include 'backend:url-service'
 include 'backend:url-service-interface'
 include 'backend:url-service-db-migration'
+include 'backend:key-generation-service'
+include 'backend:key-generation-service-interface'
+include 'backend:key-generation-service-db-migration'
 include 'backend:scheduler-service'
 
 include 'frontend:website'

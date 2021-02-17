@@ -9,9 +9,6 @@ import app.api.url.EncodeUrlResponse;
 import core.framework.inject.Inject;
 import core.framework.web.rate.LimitRate;
 
-import static app.api.shorturl.EncodeUrlAJAXRequest.Availability.ONE_DAY;
-import static app.api.shorturl.EncodeUrlAJAXRequest.Availability.ONE_WEEK;
-
 public class ShortUrlAJAXServiceImpl implements ShortUrlAJAXService {
     @Inject
     UrlWebService urlWebService;
@@ -21,14 +18,6 @@ public class ShortUrlAJAXServiceImpl implements ShortUrlAJAXService {
     public EncodeUrlAJAXResponse encode(EncodeUrlAJAXRequest request) {
         var encodeUrlRequest = new EncodeUrlRequest();
         encodeUrlRequest.url = request.url;
-
-        if (request.availability == ONE_DAY) {
-            encodeUrlRequest.lastForDays = 1;
-        } else if (request.availability == ONE_WEEK) {
-            encodeUrlRequest.lastForDays = 7;
-        } else {
-            throw new Error("unsupported operation, empty lastForDays");
-        }
 
         return encodeAjaxResponse(urlWebService.encode(encodeUrlRequest));
     }

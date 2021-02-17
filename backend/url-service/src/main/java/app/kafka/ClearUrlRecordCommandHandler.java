@@ -2,7 +2,7 @@ package app.kafka;
 
 import app.api.url.ResolveUrlResponse;
 import app.api.url.kafka.ClearUrlRecordCommand;
-import app.tool.ShortUrlService;
+import app.service.ShortUrlService;
 import core.framework.cache.Cache;
 import core.framework.inject.Inject;
 import core.framework.kafka.MessageHandler;

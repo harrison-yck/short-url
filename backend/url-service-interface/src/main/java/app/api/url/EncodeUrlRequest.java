@@ -7,8 +7,4 @@ public class EncodeUrlRequest {
     @NotNull
     @Property(name = "url")
     public String url;
-
-    @NotNull
-    @Property(name = "lastForDays")
-    public Integer lastForDays;
 }

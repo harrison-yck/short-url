@@ -3,6 +3,7 @@ package app.website.web;
 import app.api.UrlWebService;
 import app.api.url.ResolveUrlRequest;
 import app.api.url.ResolveUrlResponse;
+import core.framework.cache.Cache;
 import core.framework.http.ContentType;
 import core.framework.inject.Inject;
 import core.framework.template.HTMLTemplateEngine;
@@ -18,20 +19,21 @@ public class ForwardPageController implements Controller {
     @Inject
     HTMLTemplateEngine htmlTemplateEngine;
     @Inject
+    Cache<ResolveUrlResponse> resolveUrlResponseCache;
+    @Inject
     UrlWebService urlWebService;
 
     @Override
     public Response execute(Request request) {
         var resolveRequest = new ResolveUrlRequest();
         resolveRequest.url = request.path();
-        ResolveUrlResponse resolvedResult = urlWebService.resolve(resolveRequest);
 
-        System.out.println("redirect page");
+        ResolveUrlResponse resolveUrlResponse = resolveUrlResponseCache.get(request.path(), key -> {
+            var response = new ResolveUrlResponse();
+            ResolveUrlResponse resolvedResult = urlWebService.resolve(resolveRequest);
+            return resolvedResult == null ? null : response;
+        });
 
-        if (resolvedResult.result != null) {
-            return Response.bytes(htmlTemplateEngine.process(FAILED_TEMPLATE, new Object()).getBytes(UTF_8)).contentType(ContentType.TEXT_HTML);
-        }
-
-        return Response.redirect(FAILED_TEMPLATE);
+        return resolveUrlResponse.result == null ? Response.redirect(FAILED_TEMPLATE) : Response.bytes(htmlTemplateEngine.process(resolveUrlResponse.result, new Object()).getBytes(UTF_8)).contentType(ContentType.TEXT_HTML);
     }
 }

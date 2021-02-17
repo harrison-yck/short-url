@@ -20,7 +20,4 @@ public class ShortUrlEntity {
 
     @Field(name = "created_time")
     public ZonedDateTime createdTime;
-
-    @Field(name = "expiration_time")
-    public ZonedDateTime expirationTime;
 }
