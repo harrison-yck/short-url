@@ -5,7 +5,7 @@ import core.framework.api.validate.NotNull;
 
 import java.time.ZonedDateTime;
 
-public class ClearUrlRecordCommand {
+public class GenerateUrlCommand {
     @NotNull
     @Property(name = "triggeredTime")
     public ZonedDateTime triggeredTime;
