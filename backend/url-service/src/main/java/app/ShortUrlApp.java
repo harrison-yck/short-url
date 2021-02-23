@@ -1,5 +1,6 @@
 package app;
 
+import app.api.KeyGenerationWebService;
 import app.api.UrlWebService;
 import app.api.url.ResolveUrlResponse;
 import app.entity.ShortUrlEntity;
@@ -16,12 +17,15 @@ public class ShortUrlApp extends App {
     @Override
     protected void initialize() {
         load(new SystemModule("sys.properties"));
+        loadProperties("app.properties");
 
         cache().add(ResolveUrlResponse.class, Duration.ofDays(30));
 
         MongoConfig mongo = config(MongoConfig.class);
         mongo.uri("mongodb://localhost:27017/shortUrl");
         mongo.collection(ShortUrlEntity.class);
+
+        api().client(KeyGenerationWebService.class, requiredProperty("app.keyServiceURL"));
 
         bind(ShortUrlService.class);
 

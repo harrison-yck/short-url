@@ -23,7 +23,7 @@ public class ShortUrlService {
         var entity = new ShortUrlEntity();
         entity.id = new ObjectId();
         entity.originalUrl = request.url;
-        entity.encodedUrl = keyGenerationWebService.getKey();
+        entity.encodedUrl = keyGenerationWebService.getKey().key;
         entity.createdTime = ZonedDateTime.now();
         collection.insert(entity);
         return entity;

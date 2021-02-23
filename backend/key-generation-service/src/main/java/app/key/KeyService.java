@@ -1,12 +1,11 @@
 package app.key;
 
 import app.api.url.kafka.GenerateUrlCommand;
+import app.api.url.kafka.GetKeyResponse;
 import app.entity.KeyEntity;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
-import core.framework.api.json.Property;
-import core.framework.api.validate.NotNull;
 import core.framework.inject.Inject;
 import core.framework.json.Bean;
 import core.framework.kafka.MessagePublisher;
@@ -26,9 +25,9 @@ public class KeyService {
     private static final int KEY_BATCH_SIZE = 100000;
 
     @Inject
-    MongoCollection<KeyEntity> keyEntities;
-    @Inject
     Redis redis;
+    @Inject
+    MongoCollection<KeyEntity> keyEntities;
     @Inject
     MessagePublisher<GenerateUrlCommand> publisher;
 
@@ -60,17 +59,18 @@ public class KeyService {
         keyEntities.bulkInsert(entities);
     }
 
-    public String getKey() {
-        String object = redis.list().pop(Strings.format(URL_KEY, KEY_LENGTH));
+    public GetKeyResponse getKey() {
+        String obj = redis.list().pop(Strings.format(URL_KEY, KEY_LENGTH));
 
-        if (object != null) {
-            Key key = Bean.fromJSON(Key.class, object);
+        var getKeyResponse = new GetKeyResponse();
+        if (obj != null) {
+            Key key = Bean.fromJSON(Key.class, obj);
             keyEntities.update(Filters.eq("id", key.id), Updates.set("used", Boolean.TRUE));
-            return key.value;
+            getKeyResponse.key = key.value;
         } else {
             loadKeyToRedis();
-            throw new Error();
         }
+        return getKeyResponse;
     }
 
     private void loadKeyToRedis() {
@@ -86,19 +86,9 @@ public class KeyService {
     String[] key(List<KeyEntity> entities) {
         return entities.stream().map(entity -> {
             var key = new Key();
-            key.id = entity.id;
+            key.id = entity.id.toHexString();
             key.value = entity.url;
             return Bean.toJSON(key);
         }).toArray(String[]::new);
-    }
-
-    static class Key {
-        @NotNull
-        @Property(name = "id")
-        public ObjectId id;
-
-        @NotNull
-        @Property(name = "value")
-        public String value;
     }
 }

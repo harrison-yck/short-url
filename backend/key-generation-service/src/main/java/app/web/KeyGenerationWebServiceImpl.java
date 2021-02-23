@@ -1,6 +1,7 @@
 package app.web;
 
 import app.api.KeyGenerationWebService;
+import app.api.url.kafka.GetKeyResponse;
 import app.key.KeyService;
 import core.framework.inject.Inject;
 
@@ -9,7 +10,7 @@ public class KeyGenerationWebServiceImpl implements KeyGenerationWebService {
     KeyService keyService;
 
     @Override
-    public String getKey() {
+    public GetKeyResponse getKey() {
         return keyService.getKey();
     }
 }
