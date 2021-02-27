@@ -19,7 +19,7 @@ import java.util.List;
 
 public class KeyService {
     private static final int KEY_LENGTH = 6;
-    private static final int MAX_KEY = (int) Math.pow(62, KEY_LENGTH); // int can hold this
+    private static final long MAX_KEY = (int) Math.pow(62, KEY_LENGTH);
 
     private static final double GENERATE_THRESHOLD = 0.9;
     private static final int KEY_BATCH_SIZE = 1000000;
@@ -29,27 +29,31 @@ public class KeyService {
     @Inject
     MongoCollection<KeyEntity> keyEntities;
 
-    public void generateKeys() {
-        var query = new Query();
-        query.filter = Filters.eq("length", KEY_LENGTH);
-        query.sort = Sorts.descending("incrementalKey");
-        query.limit = 1;
+    public boolean generateKeys() {
+        if (keyInDBAlmostEmpty()) {
+            var query = new Query();
+            query.filter = Filters.eq("length", KEY_LENGTH);
+            query.sort = Sorts.descending("incrementalKey");
+            query.limit = 1;
 
-        List<KeyEntity> lastKey = keyEntities.find(query);
-        int start = lastKey.isEmpty() ? 1 : lastKey.get(0).incrementalKey + 1;
-        int end = lastKey.isEmpty() ? KEY_BATCH_SIZE : start + KEY_BATCH_SIZE;
+            List<KeyEntity> lastKey = keyEntities.find(query);
+            long start = lastKey.isEmpty() ? 1 : lastKey.get(0).incrementalKey + 1;
+            long end = lastKey.isEmpty() ? KEY_BATCH_SIZE : start + KEY_BATCH_SIZE;
+            double usedPercentage = ((double) MAX_KEY - end) / MAX_KEY;
+            if (usedPercentage >= 0.8) logger.warn(Markers.errorCode("KEY_ALMOST_USED_UP"), "{}% of keys has been used, please increment the key length ASAP", usedPercentage * 100);
 
-        double usedPercentage = ((double) MAX_KEY - end) / MAX_KEY;
-        if (usedPercentage >= 0.8) logger.warn(Markers.errorCode("KEY_ALMOST_USED_UP"), "{}% of keys has been used, please increment the key length ASAP", usedPercentage * 100);
+            generate(start, end);
+            return true;
+        }
 
-        generate(start, end);
+        return false;
     }
 
-    private void generate(int start, int end) {
+    private void generate(long start, long end) {
         var generator = new KeyGenerator();
         List<KeyEntity> entities = Lists.newArrayList();
 
-        for (int i = start; i <= end; i++) {
+        for (long i = start; i <= end; i++) {
             var entity = new KeyEntity();
             entity.id = new ObjectId();
             entity.length = KEY_LENGTH;
@@ -65,14 +69,14 @@ public class KeyService {
         findOne.filter = Filters.and(Filters.eq("length", KEY_LENGTH), Filters.eq("used", Boolean.FALSE));
         KeyEntity keyEntity = keyEntities.findOne(findOne).orElseThrow(() -> new Error("No key is left"));
 
-        if (limitReached()) generateKeys();
+        if (keyInDBAlmostEmpty()) generateKeys();
 
         var getKeyResponse = new GetKeyResponse();
         getKeyResponse.key = keyEntity.url;
         return getKeyResponse;
     }
 
-    private boolean limitReached() {
+    private boolean keyInDBAlmostEmpty() {
         var count = new Count();
         count.filter = Filters.and(Filters.eq("length", KEY_LENGTH), Filters.eq("used", Boolean.FALSE));
         return Long.divideUnsigned(keyEntities.count(count), KEY_BATCH_SIZE) >= GENERATE_THRESHOLD;

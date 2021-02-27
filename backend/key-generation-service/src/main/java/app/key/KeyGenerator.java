@@ -7,13 +7,13 @@ public class KeyGenerator {
         '1', '2', '3', '4', '5', '6', '7', '8', '9', '_'
     };
 
-    public String generate(int key, Integer length) {
+    public String generate(long key, Integer length) {
         char[] url = new char[length + 1];
 
-        int sourceNumber = key;
+        long sourceNumber = key;
         for (int i = 0; i < length; i++) {
             if (sourceNumber > 0) {
-                url[i] = BASE_62_CHARS[sourceNumber % BASE_62_CHARS.length];
+                url[i] = BASE_62_CHARS[(int) (sourceNumber % BASE_62_CHARS.length)];
                 sourceNumber /= BASE_62_CHARS.length;
             } else {
                 url[i] = '0';

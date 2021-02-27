@@ -21,7 +21,6 @@ public class WebsiteApp extends App {
 
         load(new ShortUrlModule());
 
-        http().maxForwardedIPs(3);
         http().gzip();
         site().security();
 
@@ -33,7 +32,6 @@ public class WebsiteApp extends App {
 
         site().staticContent("/static").cache(Duration.ofHours(1));
         site().staticContent("/favicon.ico").cache(Duration.ofHours(1));
-        site().staticContent("/robots.txt");
 
         http().limitRate().add("encode", 1, 1, TimeUnit.SECONDS);
     }

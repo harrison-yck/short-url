@@ -17,7 +17,7 @@ public class KeyEntity {
 
     @NotNull
     @Field(name = "incremental_key")
-    public Integer incrementalKey;
+    public Long incrementalKey;
 
     @Field(name = "url")
     public String url;
