@@ -7,6 +7,7 @@ import core.framework.inject.Inject;
 import core.framework.mongo.Mongo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,6 +23,7 @@ public class ShortUrlServiceTest extends IntegrationTest {
     }
 
     @Test
+    @Disabled
     void same() {
         var request = new EncodeUrlRequest();
         request.url = "google.com";

@@ -1,7 +1,7 @@
 apply from: file("${rootDir}/gradle/project.gradle")
 
 subprojects {
-    group = "app.ShortUrl"
+    group = "ShortURL"
     version = '1.0.0'
 
     repositories {
@@ -24,14 +24,6 @@ configure(subprojects.findAll { it.name.endsWith('-interface') }) {
     }
 }
 
-configure(subprojects.findAll { it.name.endsWith('-frontend') }) {
-    apply from: file("${rootDir}/gradle/app.gradle")
-    dependencies {
-        implementation "core.framework:core-ng:${coreNGVersion}"
-        testImplementation "core.framework:core-ng-test:${coreNGVersion}"
-    }
-}
-
 configure([project(":frontend:website")] + subprojects.findAll { it.name.endsWith('-service') }) {
     apply from: file("${rootDir}/gradle/app.gradle")
 
@@ -41,12 +33,5 @@ configure([project(":frontend:website")] + subprojects.findAll { it.name.endsWit
 
         implementation "core.framework:core-ng-mongo:${mongoVersion}"
         implementation "core.framework:core-ng-mongo-test:${mongoVersion}"
-    }
-}
-
-configure(subprojects.findAll { it.name.endsWith('-library') }) {
-    dependencies {
-        implementation "core.framework:core-ng:${coreNGVersion}"
-        testImplementation "core.framework:core-ng-test:${coreNGVersion}"
     }
 }

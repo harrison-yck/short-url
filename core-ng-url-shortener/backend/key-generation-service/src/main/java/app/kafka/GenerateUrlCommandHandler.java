@@ -15,9 +15,6 @@ public class GenerateUrlCommandHandler implements MessageHandler<GenerateUrlComm
     public void handle(String key, GenerateUrlCommand command) {
         ActionLogContext.put("triggerTime", command.triggeredTime);
 
-        if (keyService.generateKeys()) {
-            ActionLogContext.put("success", true);
-        }
-        ActionLogContext.put("success", false);
+        keyService.generateKeys();
     }
 }

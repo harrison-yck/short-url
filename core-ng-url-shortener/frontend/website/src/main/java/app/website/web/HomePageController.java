@@ -11,13 +11,13 @@ import java.nio.file.Path;
 
 
 public class HomePageController {
-    private final Path HOMEPAGE;
+    private final Path homePage;
 
     public HomePageController(WebDirectory webDirectory) {
-        HOMEPAGE = webDirectory.path("/template/index.html");
+        homePage = webDirectory.path("/template/index.html");
     }
 
     public Response index(Request request) {
-        return Response.bytes(Files.bytes(HOMEPAGE)).contentType(ContentType.TEXT_HTML);
+        return Response.bytes(Files.bytes(homePage)).contentType(ContentType.TEXT_HTML);
     }
 }
