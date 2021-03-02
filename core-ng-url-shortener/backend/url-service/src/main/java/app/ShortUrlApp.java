@@ -29,7 +29,7 @@ public class ShortUrlApp extends App {
 
         bind(ShortUrlService.class);
 
-        http().limitRate().add("resolve", 50, 1, TimeUnit.SECONDS);
+        http().limitRate().add("resolve", 50, 10, TimeUnit.SECONDS);
 
         api().service(UrlWebService.class, bind(UrlWebServiceImpl.class));
     }
