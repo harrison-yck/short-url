@@ -28,14 +28,14 @@ jobs:
       run: chmod +x gradlew
 
     - name: Gradle check and Build Docker
-        run: ./gradlew check && ./gradlew -Penv="dev" docker
+      run: ./gradlew check && ./gradlew -Penv="dev" docker
 
     - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.PACKAGES_TOKEN }}
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.PACKAGES_TOKEN }}
 
     - name: Build Website
         uses: docker/build-push-action@v2
