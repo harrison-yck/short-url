@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cache
+  namespace: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cache
+  revisionHistoryLimit: 10
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: cache
+    spec:
+      nodeSelector:
+        pool: app
+      containers:
+        - name: cache
+          image: redis:6
+          args: [ "--maxmemory", "100mb", "--maxmemory-policy", "allkeys-lru", "--appendonly", "no", "--save", "" ]
+          resources:
+            requests:
+              memory: 120Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cache
+  namespace: app
+spec:
+  ports:
+    - port: 6379
+  selector:
+    app: cache

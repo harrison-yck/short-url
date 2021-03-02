@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v2
 
       - name: Setup docker
@@ -43,7 +43,7 @@ jobs:
           context: ./core-ng-url-shortener/build/frontend/website/docker
           file: ./core-ng-url-shortener/build/frontend/website/docker/Dockerfile
           push: true
-          tags: ghcr.io/harrison-yck/ShortUrl-website:latest
+          tags: ghcr.io/harrison-yck/shorturl/website:latest
 
       - name: Build Scdeduler Service
         uses: docker/build-push-action@v2
@@ -51,7 +51,7 @@ jobs:
           context: ./core-ng-url-shortener/build/backend/scheduler-service/docker
           file: ./core-ng-url-shortener/build/backend/scheduler-service/docker/Dockerfile
           push: true
-          tags: ghcr.io/harrison-yck/ShortUrl-scheduler-service:latest
+          tags: ghcr.io/harrison-yck/shorturl/scheduler-service:latest
 
       - name: Build Key Generation Service
         uses: docker/build-push-action@v2
@@ -59,7 +59,7 @@ jobs:
           context: ./core-ng-url-shortener/build/backend/key-generation-service/docker
           file: ./core-ng-url-shortener/build/backend/key-generation-service/docker/Dockerfile
           push: true
-          tags: ghcr.io/harrison-yck/ShortUrl-key-generation-service:latest
+          tags: ghcr.io/harrison-yck/shorturl/key-generation-service:latest
 
       - name: Build Url Service
         uses: docker/build-push-action@v2
@@ -67,4 +67,4 @@ jobs:
           context: ./core-ng-url-shortener/build/backend/url-service/docker
           file: ./core-ng-url-shortener/build/backend/url-service/docker/Dockerfile
           push: true
-          tags: ghcr.io/harrison-yck/ShortUrl-url-service:latest
+          tags: ghcr.io/harrison-yck/shorturl/url-service:latest
