@@ -83,3 +83,4 @@ jobs:
           file: ./core-ng-url-shortener/build/backend/url-service/docker/Dockerfile
           push: true
           tags: ghcr.io/harrison-yck/shorturl/url-service:latest
+
