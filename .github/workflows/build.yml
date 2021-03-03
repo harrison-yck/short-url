@@ -9,9 +9,8 @@ defaults:
     working-directory: core-ng-url-shortener
 
 jobs:
-  build:
+  setup:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -37,6 +36,10 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGES_TOKEN }}
 
+  build-website:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
       - name: Build Website
         uses: docker/build-push-action@v2
         with:
@@ -45,6 +48,10 @@ jobs:
           push: true
           tags: ghcr.io/harrison-yck/shorturl/website:latest
 
+  build-scheduler-service:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
       - name: Build Scdeduler Service
         uses: docker/build-push-action@v2
         with:
@@ -53,6 +60,10 @@ jobs:
           push: true
           tags: ghcr.io/harrison-yck/shorturl/scheduler-service:latest
 
+  build-key-generation-service:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
       - name: Build Key Generation Service
         uses: docker/build-push-action@v2
         with:
@@ -61,6 +72,10 @@ jobs:
           push: true
           tags: ghcr.io/harrison-yck/shorturl/key-generation-service:latest
 
+  build-url-service:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
       - name: Build Url Service
         uses: docker/build-push-action@v2
         with:
