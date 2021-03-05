@@ -42,7 +42,7 @@ jobs:
           context: ./core-ng-url-shortener/build/frontend/website/docker
           file: ./core-ng-url-shortener/build/frontend/website/docker/Dockerfile
           push: true
-          tags: ghcr.io/harrison-yck/website:latest
+          tags: ghcr.io/harrison-yck/short-url/website:latest
 
       - name: Build Scdeduler Service
         uses: docker/build-push-action@v2
@@ -50,7 +50,7 @@ jobs:
           context: ./core-ng-url-shortener/build/backend/scheduler-service/docker
           file: ./core-ng-url-shortener/build/backend/scheduler-service/docker/Dockerfile
           push: true
-          tags: ghcr.io/harrison-yck/scheduler-service:latest
+          tags: ghcr.io/harrison-yck/short-url/scheduler-service:latest
 
       - name: Build Key Generation Service
         uses: docker/build-push-action@v2
@@ -58,7 +58,7 @@ jobs:
           context: ./core-ng-url-shortener/build/backend/key-generation-service/docker
           file: ./core-ng-url-shortener/build/backend/key-generation-service/docker/Dockerfile
           push: true
-          tags: ghcr.io/harrison-yck/key-generation-service:latest
+          tags: ghcr.io/harrison-yck/short-url/key-generation-service:latest
 
       - name: Build Url Service
         uses: docker/build-push-action@v2
@@ -66,5 +66,5 @@ jobs:
           context: ./core-ng-url-shortener/build/backend/url-service/docker
           file: ./core-ng-url-shortener/build/backend/url-service/docker/Dockerfile
           push: true
-          tags: ghcr.io/harrison-yck/url-service:latest
+          tags: ghcr.io/harrison-yck/short-url/url-service:latest
 
