@@ -65,7 +65,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ${{steps.download.outputs.download-path}}
-          file: ./core-ng-url-shortener/build/frontend/website/docker/Dockerfile
+          file: ${{steps.download.outputs.download-path}}/Dockerfile
           push: true
           tags: ghcr.io/harrison-yck/short-url/website:latest
 
@@ -83,7 +83,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ${{steps.download.outputs.download-path}}
-          file: ./core-ng-url-shortener/build/backend/scheduler-service/docker/Dockerfile
+          file: ${{steps.download.outputs.download-path}}/Dockerfile
           push: true
           tags: ghcr.io/harrison-yck/short-url/scheduler-service:latest
 
@@ -101,7 +101,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ${{steps.download.outputs.download-path}}
-          file: ./core-ng-url-shortener/build/backend/key-generation-service/docker/Dockerfile
+          file: ${{steps.download.outputs.download-path}}/Dockerfile
           push: true
           tags: ghcr.io/harrison-yck/short-url/key-generation-service:latest
 
@@ -119,7 +119,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ${{steps.download.outputs.download-path}}
-          file: ./core-ng-url-shortener/build/backend/url-service/docker/Dockerfile
+          file: ${{steps.download.outputs.download-path}}/Dockerfile
           push: true
           tags: ghcr.io/harrison-yck/short-url/url-service:latest
 
