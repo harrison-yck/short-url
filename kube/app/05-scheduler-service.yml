@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: website
+  name: scheduler-service
   namespace: app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: website
+      app: scheduler-service
   strategy:
     rollingUpdate:
       maxUnavailable: 0
@@ -16,11 +16,11 @@ spec:
   template:
     metadata:
       labels:
-        app: website
+        app: scheduler-service
     spec:
       containers:
         - name: website
-          image: ghcr.io/harrison-yck/shorturl/website:latest
+          image: ghcr.io/harrison-yck/short-url/scheduler-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: https
@@ -43,7 +43,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: website
+  name: scheduler-service
   namespace: app
 spec:
   ports:
@@ -51,4 +51,4 @@ spec:
       port: 443
       targetPort: 8443
   selector:
-    app: website
+    app: scheduler-service
