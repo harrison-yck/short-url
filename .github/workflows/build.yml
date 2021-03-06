@@ -61,17 +61,10 @@ jobs:
           name: build
           path: ./core-ng-url-shortener/build/frontend/website/docker
 
-      - id: download-dockerfile
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-          path: ./core-ng-url-shortener/build/frontend/website/docker/Dockerfile
-
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
           context: ${{steps.download.outputs.download-path}}
-          file: ${{steps.download-dockerfile.outputs.download-path}}
           push: true
           tags: ghcr.io/harrison-yck/short-url/website:latest
 
@@ -85,17 +78,10 @@ jobs:
           name: build
           path: ./core-ng-url-shortener/build/frontend/website/docker
 
-      - id: download-dockerfile
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-          path: ./core-ng-url-shortener/build/frontend/website/docker/Dockerfile
-
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
           context: ${{steps.download.outputs.download-path}}
-          file: ${{steps.download.outputs.download-path}}/Dockerfile
           push: true
           tags: ghcr.io/harrison-yck/short-url/scheduler-service:latest
 
@@ -109,17 +95,10 @@ jobs:
           name: build
           path: ./core-ng-url-shortener/build/frontend/website/docker
 
-      - id: download-dockerfile
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-          path: ./core-ng-url-shortener/build/frontend/website/docker/Dockerfile
-
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
           context: ${{steps.download.outputs.download-path}}
-          file: ${{steps.download.outputs.download-path}}/Dockerfile
           push: true
           tags: ghcr.io/harrison-yck/short-url/key-generation-service:latest
 
@@ -133,17 +112,10 @@ jobs:
           name: build
           path: ./core-ng-url-shortener/build/frontend/website/docker
 
-      - id: download-dockerfile
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-          path: ./core-ng-url-shortener/build/frontend/website/docker/Dockerfile
-
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
           context: ${{steps.download.outputs.download-path}}
-          file: ${{steps.download.outputs.download-path}}/Dockerfile
           push: true
           tags: ghcr.io/harrison-yck/short-url/url-service:latest
 
