@@ -42,7 +42,6 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: ./core-ng-url-shortener
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
@@ -57,14 +56,15 @@ jobs:
     steps:
       - id: download
         uses: actions/download-artifact@v2
-        with:
-          name: build
-          path: ./core-ng-url-shortener/build/frontend/website/docker
+        name: build
+
+      - name: 'Echo download path'
+        run: echo ${{steps.download.outputs.download-path}}
 
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
-          context: ${{steps.download.outputs.download-path}}
+          context: ${{steps.download.outputs.download-path}}/core-ng-url-shortener/build/frontend/website/docker
           push: true
           tags: ghcr.io/harrison-yck/short-url/website:latest
 
@@ -76,12 +76,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: ./core-ng-url-shortener/build/frontend/website/docker
 
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
-          context: ${{steps.download.outputs.download-path}}
+          context: ${{steps.download.outputs.download-path}}/core-ng-url-shortener/build/backend/scheduler-service/docker
           push: true
           tags: ghcr.io/harrison-yck/short-url/scheduler-service:latest
 
@@ -93,12 +92,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: ./core-ng-url-shortener/build/frontend/website/docker
 
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
-          context: ${{steps.download.outputs.download-path}}
+          context: ${{steps.download.outputs.download-path}}/core-ng-url-shortener/build/backend/key-generation-service/docker
           push: true
           tags: ghcr.io/harrison-yck/short-url/key-generation-service:latest
 
@@ -110,12 +108,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build
-          path: ./core-ng-url-shortener/build/frontend/website/docker
 
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
-          context: ${{steps.download.outputs.download-path}}
+          context: ${{steps.download.outputs.download-path}}/core-ng-url-shortener/build/backend/url-service/docker
           push: true
           tags: ghcr.io/harrison-yck/short-url/url-service:latest
 
