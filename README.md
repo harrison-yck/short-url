@@ -8,12 +8,18 @@
 <p align="center">A small project for shorten url application</p>
 
 ## Table of Contents
+
 - [Features](#features)
 - [Design](#design)
 - [Limitation](#limitation)
 - [Authors](#authors)
 
 ## Features
+
+## How To Use
+
+1. Create a cluster (you can use software like minikube or <a ref='https://github.com/hokamc/kubernetes-demo'>MicroK8s</a>)
+2.
 
 ## Design
 

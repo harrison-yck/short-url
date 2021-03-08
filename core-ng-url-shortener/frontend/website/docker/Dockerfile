@@ -4,4 +4,5 @@ RUN         addgroup --system app && adduser --system --no-create-home --ingroup
 USER        app
 COPY        package/dependency     /opt/app
 COPY        package/app            /opt/app
+CMD         ["ls -al"]
 CMD         ["/opt/app/bin/website"]
