@@ -13,11 +13,17 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: url-service-statefulset
+  name: url-service
 spec:
   serviceName: url-service-db-service
   replicas: 1
+  selector:
+    matchLabels:
+      role: mongo
   template:
+    metadata:
+      labels:
+        role: mongo
     spec:
       terminationGracePeriodSeconds: 10
       containers:

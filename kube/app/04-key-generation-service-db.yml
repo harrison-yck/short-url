@@ -13,11 +13,17 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: key-generation-service-statefulset
+  name: key-generation-service
 spec:
   serviceName: key-generation-service-db
   replicas: 1
+  selector:
+    matchLabels:
+      role: mongo
   template:
+    metadata:
+      labels:
+        role: mongo
     spec:
       terminationGracePeriodSeconds: 10
       containers:
