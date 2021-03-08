@@ -39,7 +39,7 @@ jobs:
         run: ./gradlew check && ./gradlew -Penv="dev" docker
 
       - name: Tar Build
-        run: tar zcvf build.tar .
+        run: tar zcvf build.tar.gz ./
 
       - name: Upload Build
         uses: actions/upload-artifact@v2
