@@ -39,7 +39,7 @@ jobs:
         run: ./gradlew check && ./gradlew -Penv="dev" docker
 
       - name: Tar Build
-        run: tar -cvf ./build.tar ./core-ng-url-shortener
+        run: tar cvf ./build.tar .
 
       - name: Upload Build
         uses: actions/upload-artifact@v2
