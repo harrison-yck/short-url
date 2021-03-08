@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ release ]
+    branches: [ master ]
 
 defaults:
   run:
@@ -39,7 +39,7 @@ jobs:
         run: ./gradlew check && ./gradlew -Penv="dev" docker
 
       - name: Tar Build
-        run: tar cvf ./build.tar .
+        run: tar zcvf build.tar .
 
       - name: Upload Build
         uses: actions/upload-artifact@v2
