@@ -38,9 +38,6 @@ jobs:
       - name: Gradle check and build
         run: ./gradlew check && ./gradlew -Penv="dev" docker
 
-      - name: Tar Build
-        run: tar --exclude=build.tar.gz -zcvf build.tar.gz ./
-
       - name: Upload Build
         uses: actions/upload-artifact@v2
         with:
@@ -63,8 +60,8 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGES_TOKEN }}
 
-      - name: Untar Build
-        run: tar -zxvf ${{steps.download.outputs.download-path}}
+      - name: Change permission
+        run: chmod -R +x ${{steps.download.outputs.download-path}}/core-ng-url-shortener
 
       - name: Build and Push Image
         uses: docker/build-push-action@v2
@@ -89,8 +86,8 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGES_TOKEN }}
 
-      - name: Untar Build
-        run: tar -zxvf ${{steps.download.outputs.download-path}}
+      - name: Change permission
+        run: chmod -R +x ${{steps.download.outputs.download-path}}/core-ng-url-shortener
 
       - name: Build and Push Image
         uses: docker/build-push-action@v2
@@ -115,8 +112,8 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGES_TOKEN }}
 
-      - name: Untar Build
-        run: tar -zxvf ${{steps.download.outputs.download-path}}
+      - name: Change permission
+        run: chmod -R +x ${{steps.download.outputs.download-path}}/core-ng-url-shortener
 
       - name: Build and Push Image
         uses: docker/build-push-action@v2
@@ -141,8 +138,8 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGES_TOKEN }}
 
-      - name: Untar Build
-        run: tar -zxvf ${{steps.download.outputs.download-path}}
+      - name: Change permission
+        run: chmod -R +x ${{steps.download.outputs.download-path}}/core-ng-url-shortener
 
       - name: Build and Push Image
         uses: docker/build-push-action@v2
