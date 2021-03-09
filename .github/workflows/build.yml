@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: ./build.tar
+          path: ./core-ng-url-shortener
 
   build-website-image:
     runs-on: ubuntu-latest
