@@ -60,10 +60,13 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGES_TOKEN }}
 
+      - name: Set Permission
+        run: chmod +x ${{steps.download.outputs.download-path}}/build/frontend/website/docker
+
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
-          context: ${{steps.download.outputs.download-path}}/core-ng-url-shortener/build/frontend/website/docker
+          context: ${{steps.download.outputs.download-path}}/build/frontend/website/docker
           push: true
           tags: ghcr.io/harrison-yck/short-url/website:latest
 
@@ -83,10 +86,13 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGES_TOKEN }}
 
+      - name: Set Permission
+        run: chmod +x ${{steps.download.outputs.download-path}}/build/backend/scheduler-service/docker
+
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
-          context: ${{steps.download.outputs.download-path}}/core-ng-url-shortener/build/backend/scheduler-service/docker
+          context: ${{steps.download.outputs.download-path}}/build/backend/scheduler-service/docker
           push: true
           tags: ghcr.io/harrison-yck/short-url/scheduler-service:latest
 
@@ -106,10 +112,13 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGES_TOKEN }}
 
+      - name: Set Permission
+        run: chmod +x ${{steps.download.outputs.download-path}}/build/backend/key-generation-service/docker
+
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
-          context: ${{steps.download.outputs.download-path}}/core-ng-url-shortener/build/backend/key-generation-service/docker
+          context: ${{steps.download.outputs.download-path}}/build/backend/key-generation-service/docker
           push: true
           tags: ghcr.io/harrison-yck/short-url/key-generation-service:latest
 
@@ -129,10 +138,13 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGES_TOKEN }}
 
+      - name: Set Permission
+        run: chmod +x ${{steps.download.outputs.download-path}}/build/backend/url-service/docker
+
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
-          context: ${{steps.download.outputs.download-path}}/core-ng-url-shortener/build/backend/url-service/docker
+          context: ${{steps.download.outputs.download-path}}/build/backend/url-service/docker
           push: true
           tags: ghcr.io/harrison-yck/short-url/url-service:latest
 
