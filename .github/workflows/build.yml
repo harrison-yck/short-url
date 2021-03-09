@@ -60,9 +60,6 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGES_TOKEN }}
 
-      - name: Change permission
-        run: chmod -R +x ${{steps.download.outputs.download-path}}/core-ng-url-shortener
-
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
@@ -85,9 +82,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGES_TOKEN }}
-
-      - name: Change permission
-        run: chmod -R +x ${{steps.download.outputs.download-path}}/core-ng-url-shortener
 
       - name: Build and Push Image
         uses: docker/build-push-action@v2
@@ -112,9 +106,6 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGES_TOKEN }}
 
-      - name: Change permission
-        run: chmod -R +x ${{steps.download.outputs.download-path}}/core-ng-url-shortener
-
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
@@ -137,9 +128,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.PACKAGES_TOKEN }}
-
-      - name: Change permission
-        run: chmod -R +x ${{steps.download.outputs.download-path}}/core-ng-url-shortener
 
       - name: Build and Push Image
         uses: docker/build-push-action@v2
