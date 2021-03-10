@@ -38,110 +38,32 @@ jobs:
       - name: Gradle check and build
         run: ./gradlew check && ./gradlew -Penv="dev" docker
 
-      - name: Upload Build
-        uses: actions/upload-artifact@v2
-        with:
-          name: build
-          path: ./core-ng-url-shortener
 
-  build-website-image:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - id: download
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.PACKAGES_TOKEN }}
-
-      - name: Set Permission
-        run: chmod -R +x ${{steps.download.outputs.download-path}}
-
-      - name: Build and Push Image
+      - name: Build and Push Website Image
         uses: docker/build-push-action@v2
         with:
           context: ${{steps.download.outputs.download-path}}/build/frontend/website/docker
           push: true
           tags: ghcr.io/harrison-yck/short-url/website:latest
 
-  build-scdeduler-service-image:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - id: download
-        uses: actions/download-artifact@v2
-        with:
-          name: build
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.PACKAGES_TOKEN }}
-
-      - name: Set Permission
-        run: chmod -R +x ${{steps.download.outputs.download-path}}
-
-      - name: Build and Push Image
+      - name: Build and Push Scheduler Image
         uses: docker/build-push-action@v2
         with:
           context: ${{steps.download.outputs.download-path}}/build/backend/scheduler-service/docker
           push: true
           tags: ghcr.io/harrison-yck/short-url/scheduler-service:latest
 
-  build-key-generation-service-image:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - id: download
-        uses: actions/download-artifact@v2
-        with:
-          name: build
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.PACKAGES_TOKEN }}
-
-      - name: Set Permission
-        run: chmod -R +x ${{steps.download.outputs.download-path}}
-
-      - name: Build and Push Image
+      - name: Build and Push Key Generator Image
         uses: docker/build-push-action@v2
         with:
           context: ${{steps.download.outputs.download-path}}/build/backend/key-generation-service/docker
           push: true
           tags: ghcr.io/harrison-yck/short-url/key-generation-service:latest
 
-  build-url-service-image:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - id: download
-        uses: actions/download-artifact@v2
-        with:
-          name: build
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.PACKAGES_TOKEN }}
-
-      - name: Set Permission
-        run: chmod -R +x ${{steps.download.outputs.download-path}}
-
-      - name: Build and Push Image
+      - name: Build and Push Url Service Image
         uses: docker/build-push-action@v2
         with:
           context: ${{steps.download.outputs.download-path}}/build/backend/url-service/docker
@@ -150,7 +72,7 @@ jobs:
 
   slack-notification:
     runs-on: ubuntu-latest
-    needs: [ build, build-website-image, build-scdeduler-service-image, build-key-generation-service-image, build-url-service-image ]
+    needs: [ build ]
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
     steps:
