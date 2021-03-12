@@ -1,0 +1,88 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: zookeeper-pdb
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zookeeper
+spec:
+  serviceName: zookeeper
+  replicas: 3
+  selector:
+    matchLabels:
+      app: zookeeper
+  updateStrategy:
+    type: OnDelete
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: "app"
+                      operator: In
+                      values:
+                        - zookeeper
+                topologyKey: "kubernetes.io/hostname"
+      initContainers:
+        - name: init
+          image: busybox
+          imagePullPolicy: IfNotPresent
+          command: # refer to https://github.com/kubernetes/kubernetes/issues/40651
+            - "sh"
+            - "-c"
+            - |
+              echo $((${HOSTNAME##*-}+1)) > /data/myid
+      containers:
+        - name: zookeeper
+          image: zookeeper:3.5.8
+          lifecycle: # refer to https://zookeeper.apache.org/doc/r3.6.1/zookeeperAdmin.html
+            postStart:
+              exec:
+                command: [ "/bin/sh", "-c", "echo electionPortBindRetry=0 >> /conf/zoo.cfg" ]
+          env:
+            - name: JMXDISABLE
+              value: "true"
+            - name: SERVER_JVMFLAGS
+              value: "-Dzookeeper.jmx.log4j.disable=true"
+            - name: ZOO_ADMINSERVER_ENABLED
+              value: "false"
+            - name: ZOO_STANDALONE_ENABLED
+              value: "false"
+            - name: ZOO_AUTOPURGE_PURGEINTERVAL
+              value: "24"
+            - name: ZOO_SERVERS
+              value: server.1=zookeeper-0.zookeeper:2888:3888;2181 server.2=zookeeper-1.zookeeper:2888:3888;2181 server.3=zookeeper-2.zookeeper:2888:3888;2181
+      priorityClassName: critical
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper
+  labels:
+    app: zookeeper
+spec:
+  ports:
+    - port: 2181
+      name: client
+    - port: 2888
+      name: server
+    - port: 3888
+      name: leader-election
+  clusterIP: None
+  selector:
+    app: zookeeper

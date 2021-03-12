@@ -2,7 +2,6 @@ apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: kafka-pdb
-  namespace: app
 spec:
   maxUnavailable: 1
   selector:
@@ -13,7 +12,6 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: kafka
-  namespace: app
 spec:
   serviceName: kafka
   replicas: 3
@@ -28,21 +26,6 @@ spec:
       labels:
         app: kafka
     spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: "app"
-                      operator: In
-                      values:
-                        - kafka
-                topologyKey: "kubernetes.io/hostname"
-
-      nodeSelector:
-        pool: app
       containers:
         - name: kafka
           env:
@@ -62,29 +45,11 @@ spec:
             timeoutSeconds: 5
             periodSeconds: 10
             initialDelaySeconds: 40
-          volumeMounts:
-            - name: data
-              mountPath: /data
-          resources:
-            limits:
-              memory: 2Gi
-      priorityClassName: critical
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ssd
-        resources:
-          requests:
-            storage: 128Gi
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: kafka
-  namespace: app
 spec:
   clusterIP: None
   ports:
