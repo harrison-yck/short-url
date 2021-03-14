@@ -17,7 +17,7 @@ public class KeyGenerationServiceApp extends App {
         load(new SystemModule("sys.properties"));
 
         MongoConfig mongo = config(MongoConfig.class);
-        mongo.uri("mongodb://localhost:27016/key-generation");
+        mongo.uri("mongodb://localhost:27016/key");
         mongo.collection(KeyEntity.class);
 
         bind(KeyService.class);

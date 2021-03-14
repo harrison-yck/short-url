@@ -22,7 +22,7 @@ public class ShortUrlApp extends App {
         cache().add(ResolveUrlResponse.class, Duration.ofDays(30));
 
         MongoConfig mongo = config(MongoConfig.class);
-        mongo.uri("mongodb://localhost:27017/short-url");
+        mongo.uri("mongodb://localhost:27017/url");
         mongo.collection(ShortUrlEntity.class);
 
         api().client(KeyGenerationWebService.class, requiredProperty("app.keyServiceURL"));
