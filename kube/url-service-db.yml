@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: url-service-db-service
+  name: url-service-service-db
 spec:
   ports:
     - port: 27017
@@ -13,10 +13,10 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: url-service
+  name: url-service-db
 spec:
-  serviceName: url-service-db-service
-  replicas: 1
+  serviceName: url-service-service-db
+  replicas: 3
   selector:
     matchLabels:
       role: mongo
@@ -25,6 +25,18 @@ spec:
       labels:
         role: mongo
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: replicaset
+                      operator: In
+                      values:
+                        - MainRepSet
+                topologyKey: kubernetes.io/hostname
       terminationGracePeriodSeconds: 10
       containers:
         - name: mongod-container
@@ -38,3 +50,15 @@ spec:
               value: "admin123"
           ports:
             - containerPort: 27017
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: mongo-persistent-storage
+      spec:
+        storageClassName: "fast"
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi

@@ -4,6 +4,7 @@ import app.api.url.kafka.GetKeyResponse;
 import app.entity.KeyEntity;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
+import com.mongodb.client.model.Updates;
 import core.framework.inject.Inject;
 import core.framework.log.Markers;
 import core.framework.mongo.Count;
@@ -68,6 +69,7 @@ public class KeyService {
         var findOne = new FindOne();
         findOne.filter = Filters.and(Filters.eq("length", KEY_LENGTH), Filters.eq("used", Boolean.FALSE));
         KeyEntity keyEntity = keyEntities.findOne(findOne).orElseThrow(() -> new Error("No key is left"));
+        keyEntities.update(Filters.eq("id", keyEntity.id), Updates.set("used", Boolean.TRUE));
 
         if (keyInDBAlmostEmpty()) generateKeys();
 
