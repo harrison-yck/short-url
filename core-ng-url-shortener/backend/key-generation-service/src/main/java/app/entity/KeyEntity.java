@@ -6,7 +6,7 @@ import core.framework.mongo.Field;
 import core.framework.mongo.Id;
 import org.bson.types.ObjectId;
 
-@Collection(name = "key-entity")
+@Collection(name = "key_entity")
 public class KeyEntity {
     @Id
     public ObjectId id;

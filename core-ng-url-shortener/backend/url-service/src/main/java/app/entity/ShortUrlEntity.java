@@ -7,7 +7,7 @@ import org.bson.types.ObjectId;
 
 import java.time.ZonedDateTime;
 
-@Collection(name = "short-url-entity")
+@Collection(name = "url_entity")
 public class ShortUrlEntity {
     @Id
     public ObjectId id;
