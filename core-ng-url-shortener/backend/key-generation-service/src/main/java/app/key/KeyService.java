@@ -1,11 +1,13 @@
 package app.key;
 
+import app.api.url.kafka.GenerateUrlCommand;
 import app.api.url.kafka.GetKeyResponse;
 import app.entity.KeyEntity;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
 import core.framework.inject.Inject;
+import core.framework.kafka.MessagePublisher;
 import core.framework.log.Markers;
 import core.framework.mongo.Count;
 import core.framework.mongo.FindOne;
@@ -16,22 +18,24 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class KeyService {
     private static final int KEY_LENGTH = 6;
     private static final long MAX_KEY = (int) Math.pow(62, KEY_LENGTH);
-
-    private static final double GENERATE_THRESHOLD = 0.9;
-    private static final int KEY_BATCH_SIZE = 1000000;
+    static final double GENERATE_THRESHOLD = 0.9;
+    static final int KEY_BATCH_SIZE = 1000000;
 
     private final Logger logger = LoggerFactory.getLogger(KeyService.class);
 
     @Inject
     MongoCollection<KeyEntity> keyEntities;
+    @Inject
+    MessagePublisher<GenerateUrlCommand> publisher;
 
-    public boolean generateKeys() {
-        if (keyInDBAlmostEmpty()) {
+    public void generateKeys() {
+        if (needToGenerateKey()) {
             var query = new Query();
             query.filter = Filters.eq("length", KEY_LENGTH);
             query.sort = Sorts.descending("incrementalKey");
@@ -44,10 +48,7 @@ public class KeyService {
             if (usedPercentage >= 0.8) logger.warn(Markers.errorCode("KEY_ALMOST_USED_UP"), "{}% of keys has been used, please increment the key length ASAP", usedPercentage * 100);
 
             generate(start, end);
-            return true;
         }
-
-        return false;
     }
 
     private void generate(long start, long end) {
@@ -68,19 +69,33 @@ public class KeyService {
     public GetKeyResponse getKey() {
         var findOne = new FindOne();
         findOne.filter = Filters.and(Filters.eq("length", KEY_LENGTH), Filters.eq("used", Boolean.FALSE));
-        KeyEntity keyEntity = keyEntities.findOne(findOne).orElseThrow(() -> new Error("No key is left"));
+
+        KeyEntity keyEntity = keyEntities.findOne(findOne).orElseThrow(() -> {
+            publishGenerateKey();
+            return new Error("No key is left");
+        });
+
         keyEntities.update(Filters.eq("id", keyEntity.id), Updates.set("used", Boolean.TRUE));
 
-        if (keyInDBAlmostEmpty()) generateKeys();
+        if (needToGenerateKey()) publishGenerateKey();
 
         var getKeyResponse = new GetKeyResponse();
         getKeyResponse.key = keyEntity.url;
         return getKeyResponse;
     }
 
-    private boolean keyInDBAlmostEmpty() {
+    boolean needToGenerateKey() {
         var count = new Count();
         count.filter = Filters.and(Filters.eq("length", KEY_LENGTH), Filters.eq("used", Boolean.FALSE));
-        return Long.divideUnsigned(keyEntities.count(count), KEY_BATCH_SIZE) >= GENERATE_THRESHOLD;
+
+        long numOfUsedRecords = keyEntities.count(count);
+        double usedPercentage = (double) numOfUsedRecords / KEY_BATCH_SIZE;
+        return numOfUsedRecords == 0 || usedPercentage >= GENERATE_THRESHOLD;
+    }
+
+    private void publishGenerateKey() {
+        var command = new GenerateUrlCommand();
+        command.triggeredTime = ZonedDateTime.now();
+        publisher.publish(command);
     }
 }

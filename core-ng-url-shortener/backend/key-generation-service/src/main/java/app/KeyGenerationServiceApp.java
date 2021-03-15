@@ -17,8 +17,10 @@ public class KeyGenerationServiceApp extends App {
         load(new SystemModule("sys.properties"));
 
         MongoConfig mongo = config(MongoConfig.class);
-        mongo.uri("mongodb://localhost:27016/key");
+        mongo.uri("mongodb://localhost:27017/key");
         mongo.collection(KeyEntity.class);
+
+        kafka().publish(KeyServiceTopic.GENERATE_URL_REQUEST, GenerateUrlCommand.class);
 
         bind(KeyService.class);
 

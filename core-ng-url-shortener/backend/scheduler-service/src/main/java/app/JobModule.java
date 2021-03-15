@@ -12,6 +12,5 @@ public class JobModule extends Module {
     protected void initialize() {
         kafka().publish(KeyServiceTopic.GENERATE_URL_REQUEST, GenerateUrlCommand.class);
         schedule().dailyAt("generate-url-job", bind(GenerateUrlJob.class), LocalTime.MIDNIGHT);
-        // TODO: check key service redis key left, and trigger load to redis if not much left
     }
 }
