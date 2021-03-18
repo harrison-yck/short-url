@@ -3,14 +3,15 @@ package app.key;
 import app.api.url.kafka.GenerateUrlCommand;
 import app.api.url.kafka.GetKeyResponse;
 import app.entity.KeyEntity;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
 import core.framework.inject.Inject;
 import core.framework.kafka.MessagePublisher;
 import core.framework.log.Markers;
+import core.framework.mongo.Aggregate;
 import core.framework.mongo.Count;
-import core.framework.mongo.FindOne;
 import core.framework.mongo.MongoCollection;
 import core.framework.mongo.Query;
 import org.assertj.core.util.Lists;
@@ -25,7 +26,7 @@ public class KeyService {
     private static final int KEY_LENGTH = 6;
     private static final long MAX_KEY = (int) Math.pow(62, KEY_LENGTH);
     static final double GENERATE_THRESHOLD = 0.9;
-    static final int KEY_BATCH_SIZE = 1000000;
+    static final int KEY_BATCH_SIZE = (int) 1e7;
 
     private final Logger logger = LoggerFactory.getLogger(KeyService.class);
 
@@ -44,7 +45,7 @@ public class KeyService {
             List<KeyEntity> lastKey = keyEntities.find(query);
             long start = lastKey.isEmpty() ? 1 : lastKey.get(0).incrementalKey + 1;
             long end = lastKey.isEmpty() ? KEY_BATCH_SIZE : start + KEY_BATCH_SIZE;
-            double usedPercentage = ((double) MAX_KEY - end) / MAX_KEY;
+            double usedPercentage = (double) end / MAX_KEY;
             if (usedPercentage >= 0.8) logger.warn(Markers.errorCode("KEY_ALMOST_USED_UP"), "{}% of keys has been used, please increment the key length ASAP", usedPercentage * 100);
 
             generate(start, end);
@@ -67,20 +68,26 @@ public class KeyService {
     }
 
     public GetKeyResponse getKey() {
-        var findOne = new FindOne();
-        findOne.filter = Filters.and(Filters.eq("length", KEY_LENGTH), Filters.eq("used", Boolean.FALSE));
+        // framework doesn't implement FindOneAndUpdateOptions,
+        // so use aggregate sample to randomly pick one to reduce the chance of picking same entity
+        // and update the value using compare-and-set manner (used = TRUE) to avoid race condition
+        var aggregate = new Aggregate<KeyEntity>();
+        aggregate.resultClass = KeyEntity.class;
+        aggregate.pipeline = List.of(Aggregates.match(Filters.and(Filters.eq("length", KEY_LENGTH), Filters.eq("used", Boolean.FALSE))), Aggregates.sample(1));
 
-        KeyEntity keyEntity = keyEntities.findOne(findOne).orElseThrow(() -> {
+        List<KeyEntity> keyEntities = this.keyEntities.aggregate(aggregate);
+        if (keyEntities.isEmpty()) {
             publishGenerateKey();
-            return new Error("No key is left");
-        });
+            return new GetKeyResponse();
+        }
 
-        keyEntities.update(Filters.eq("id", keyEntity.id), Updates.set("used", Boolean.TRUE));
+        KeyEntity keyEntity = keyEntities.get(0);
+        this.keyEntities.update(Filters.and(Filters.eq("id", keyEntity.id), Filters.eq("used", Boolean.FALSE)), Updates.set("used", Boolean.TRUE));
 
         if (needToGenerateKey()) publishGenerateKey();
 
         var getKeyResponse = new GetKeyResponse();
-        getKeyResponse.key = keyEntity.url;
+        getKeyResponse.key = keyEntity.url.replace("\u0000", "");
         return getKeyResponse;
     }
 

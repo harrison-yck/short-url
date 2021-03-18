@@ -11,6 +11,7 @@ public class JobModule extends Module {
     @Override
     protected void initialize() {
         kafka().publish(KeyServiceTopic.GENERATE_URL_REQUEST, GenerateUrlCommand.class);
-        schedule().dailyAt("generate-url-job", bind(GenerateUrlJob.class), LocalTime.MIDNIGHT);
+
+        schedule().dailyAt("generate-url-job", bind(GenerateUrlJob.class), LocalTime.MIDNIGHT); // this will fire after deployment
     }
 }
