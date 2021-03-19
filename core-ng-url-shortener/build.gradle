@@ -14,7 +14,7 @@ subprojects {
     }
 }
 
-def coreNGVersion = '7.6.10'
+def coreNGVersion = '7.6.13'
 def mongoVersion = '7.6.3'
 
 configure(subprojects.findAll { it.name.endsWith('-interface') }) {
