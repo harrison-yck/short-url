@@ -5,59 +5,29 @@ metadata:
 spec:
   ports:
     - port: 27017
-      targetPort: 27017
-  clusterIP: None
+      protocol: TCP
   selector:
     role: mongo
+  type: NodePort
 ---
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
-  name: url-service-db
+  name: url-service-service-db
+  labels:
+    app: url-service-service-db
 spec:
-  serviceName: url-service-service-db
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      role: mongo
+      app: url-service-service-db
   template:
     metadata:
       labels:
-        role: mongo
+        app: url-service-service-db
     spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: replicaset
-                      operator: In
-                      values:
-                        - MainRepSet
-                topologyKey: kubernetes.io/hostname
-      terminationGracePeriodSeconds: 10
       containers:
-        - name: mongod-container
+        - name: url-service-service-db
           image: mongo
-          env:
-            - name: MACHINE_MEMORY
-              value: "500Mi"
-            - name: MONGO_USER
-              value: "admin"
-            - name: MONGO_PASSWORD
-              value: "admin123"
           ports:
             - containerPort: 27017
-          volumeMounts:
-            - name: mongo-persistent-storage
-              mountPath: /data
-  volumeClaimTemplates:
-    - metadata:
-        name: mongo-persistent-storage
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 1Gi
