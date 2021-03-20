@@ -8,10 +8,10 @@ public class KeyGenerator {
     };
 
     public String generate(long key, Integer length) {
-        char[] url = new char[length + 1];
+        char[] url = new char[length];
 
         long sourceNumber = key;
-        for (int i = 0; i < length; i++) {
+        for (int i = length - 1; i >= 0; i--) {
             if (sourceNumber > 0) {
                 url[i] = BASE_62_CHARS[(int) (sourceNumber % BASE_62_CHARS.length)];
                 sourceNumber /= BASE_62_CHARS.length;
