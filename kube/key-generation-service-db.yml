@@ -3,12 +3,11 @@ kind: Service
 metadata:
   name: key-generation-service-db
 spec:
+  selector:
+    app: key-generation-service-db
   ports:
     - port: 27017
-      protocol: TCP
-  selector:
-    role: mongo
-  type: NodePort
+      targetPort: 27017
 ---
 apiVersion: apps/v1
 kind: Deployment
