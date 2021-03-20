@@ -3,12 +3,14 @@ package app.key;
 import app.api.url.kafka.GenerateUrlCommand;
 import app.api.url.kafka.GetKeyResponse;
 import app.entity.KeyEntity;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.Updates;
 import core.framework.inject.Inject;
 import core.framework.kafka.MessagePublisher;
 import core.framework.log.Markers;
+import core.framework.mongo.Aggregate;
 import core.framework.mongo.Count;
 import core.framework.mongo.MongoCollection;
 import core.framework.mongo.Query;
@@ -69,15 +71,11 @@ public class KeyService {
         // framework doesn't implement FindOneAndUpdateOptions,
         // so use aggregate sample to randomly pick one to reduce the chance of picking same entity
         // and update the value using compare-and-set manner (used = TRUE) to avoid race condition
+        var aggregate = new Aggregate<KeyEntity>();
+        aggregate.resultClass = KeyEntity.class;
+        aggregate.pipeline = List.of(Aggregates.match(Filters.and(Filters.eq("length", KEY_LENGTH), Filters.eq("used", Boolean.FALSE))), Aggregates.sample(1));
 
-//        var aggregate = new Aggregate<KeyEntity>();
-//        aggregate.resultClass = KeyEntity.class;
-//        aggregate.pipeline = List.of(Aggregates.match(Filters.and(Filters.eq("length", KEY_LENGTH), Filters.eq("used", Boolean.FALSE))), Aggregates.sample(1));
-
-        var query = new Query();
-        query.filter = Filters.and(Filters.eq("length", KEY_LENGTH), Filters.eq("used", Boolean.FALSE));
-
-        List<KeyEntity> keyEntities = this.keyEntities.find(query); // this.keyEntities.aggregate(aggregate)
+        List<KeyEntity> keyEntities = this.keyEntities.aggregate(aggregate);
         if (keyEntities.isEmpty()) {
             publishGenerateKey();
             return new GetKeyResponse();

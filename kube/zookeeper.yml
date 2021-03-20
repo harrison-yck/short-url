@@ -38,6 +38,8 @@ spec:
                       values:
                         - zookeeper
                 topologyKey: "kubernetes.io/hostname"
+      nodeSelector:
+        pool: app
       initContainers:
         - name: init
           image: busybox

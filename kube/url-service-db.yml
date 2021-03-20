@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: url-service-service-db
+  namespace: app
 spec:
   selector:
     app: url-service-service-db
@@ -25,6 +26,8 @@ spec:
       labels:
         app: url-service-service-db
     spec:
+      nodeSelector:
+        pool: app
       containers:
         - name: url-service-service-db
           image: mongo

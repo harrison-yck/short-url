@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cache
+  namespace: app
 spec:
   replicas: 1
   selector:
@@ -17,6 +18,8 @@ spec:
       labels:
         app: cache
     spec:
+      nodeSelector:
+        pool: app
       containers:
         - name: cache
           image: redis:6
@@ -26,6 +29,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: cache
+  namespace: app
 spec:
   ports:
     - port: 6379
