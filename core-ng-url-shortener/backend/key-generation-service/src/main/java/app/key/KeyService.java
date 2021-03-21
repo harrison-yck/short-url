@@ -26,7 +26,7 @@ public class KeyService {
     private static final int KEY_LENGTH = 6;
     private static final long MAX_KEY = (int) Math.pow(62, KEY_LENGTH);
     static final double GENERATE_THRESHOLD = 0.9;
-    static final int KEY_BATCH_SIZE = (int) 1e4;
+    static final int KEY_BATCH_SIZE = (int) 1e6;
 
     private final Logger logger = LoggerFactory.getLogger(KeyService.class);
 
@@ -58,7 +58,7 @@ public class KeyService {
         List<KeyEntity> entities = Lists.newArrayList();
         for (long i = start; i <= end; i++) {
             var entity = new KeyEntity();
-            entity.id = new ObjectId();
+            entity.id = new ObjectId(String.valueOf(i));
             entity.length = KEY_LENGTH;
             entity.incrementalKey = i;
             entity.url = generator.generate(i, KEY_LENGTH);
