@@ -24,7 +24,7 @@ public class KeyService {
     private static final int KEY_LENGTH = 6;
     private static final long MAX_KEY = (int) Math.pow(62, KEY_LENGTH);
     static final double GENERATE_THRESHOLD = 0.9;
-    static final int KEY_BATCH_SIZE = (int) 1e7;
+    static final int KEY_BATCH_SIZE = (int) 1e5;
 
     private final Logger logger = LoggerFactory.getLogger(KeyService.class);
 
