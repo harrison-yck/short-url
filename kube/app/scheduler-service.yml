@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: key-generation-service
+  name: scheduler-service
   namespace: app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: key-generation-service
+      app: scheduler-service
   strategy:
     rollingUpdate:
       maxUnavailable: 0
@@ -16,13 +16,11 @@ spec:
   template:
     metadata:
       labels:
-        app: key-generation-service
+        app: scheduler-service
     spec:
-      nodeSelector:
-        pool: app
       containers:
         - name: website
-          image: ghcr.io/harrison-yck/short-url/key-generation-service:latest
+          image: ghcr.io/harrison-yck/short-url/scheduler-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: https
@@ -45,7 +43,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: key-generation-service
+  name: scheduler-service
   namespace: app
 spec:
   ports:
@@ -53,4 +51,4 @@ spec:
       port: 443
       targetPort: 8443
   selector:
-    app: key-generation-service
+    app: scheduler-service

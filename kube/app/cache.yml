@@ -18,8 +18,6 @@ spec:
       labels:
         app: cache
     spec:
-      nodeSelector:
-        pool: app
       containers:
         - name: cache
           image: redis:6

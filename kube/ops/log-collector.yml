@@ -19,11 +19,6 @@ spec:
       labels:
         app: log-collector
     spec:
-      nodeSelector:
-        pool: ops
-      terminationGracePeriodSeconds: 60
-      readinessGates:
-        - conditionType: cloud.google.com/load-balancer-neg-ready
       containers:
         - name: log-collector
           image: neowu/log-collector:7.6.3
@@ -38,8 +33,6 @@ spec:
               value: "*"
             - name: APP_COOKIES
               value: "visitor_id"
-          ports:
-            - containerPort: 8443   # for ingress finding the health check probe
           readinessProbe:
             httpGet:
               path: /health-check
@@ -58,8 +51,6 @@ kind: Service
 metadata:
   name: log-collector
   namespace: app
-  annotations:
-    cloud.google.com/app-protocols: '{"https":"HTTPS"}'
 spec:
   type: NodePort
   ports:

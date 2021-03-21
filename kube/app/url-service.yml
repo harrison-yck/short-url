@@ -18,8 +18,6 @@ spec:
       labels:
         app: url-service
     spec:
-      nodeSelector:
-        pool: app
       containers:
         - name: website
           image: ghcr.io/harrison-yck/short-url/url-service:latest

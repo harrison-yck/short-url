@@ -28,8 +28,6 @@ spec:
       labels:
         app: kafka
     spec:
-      nodeSelector:
-        pool: app
       containers:
         - name: kafka
           env:
