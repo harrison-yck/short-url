@@ -14,6 +14,7 @@ import core.framework.mongo.Aggregate;
 import core.framework.mongo.Count;
 import core.framework.mongo.MongoCollection;
 import core.framework.mongo.Query;
+import org.assertj.core.util.Lists;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ public class KeyService {
     private static final int KEY_LENGTH = 6;
     private static final long MAX_KEY = (int) Math.pow(62, KEY_LENGTH);
     static final double GENERATE_THRESHOLD = 0.9;
-    static final int KEY_BATCH_SIZE = (int) 1e7;
+    static final int KEY_BATCH_SIZE = (int) 1e4;
 
     private final Logger logger = LoggerFactory.getLogger(KeyService.class);
 
@@ -53,6 +54,8 @@ public class KeyService {
 
     private void generate(long start, long end) {
         var generator = new KeyGenerator();
+
+        List<KeyEntity> entities = Lists.newArrayList();
         for (long i = start; i <= end; i++) {
             var entity = new KeyEntity();
             entity.id = new ObjectId();
@@ -60,7 +63,9 @@ public class KeyService {
             entity.incrementalKey = i;
             entity.url = generator.generate(i, KEY_LENGTH);
             keyEntities.insert(entity);
+            entities.add(entity);
         }
+        keyEntities.bulkInsert(entities);
     }
 
     public GetKeyResponse getKey() {

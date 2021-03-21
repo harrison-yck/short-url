@@ -23,7 +23,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: JAVA_OPTS
-              value: "-XX:+UseG1GC -XX:MaxRAMPercentage=50 -XX:MaxMetaspaceSize=128m -Xss256k -XX:G1PeriodicGCInterval=2160000"
+              value: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -Xms64M"
           ports:
             - name: https
               containerPort: 8443
