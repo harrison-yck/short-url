@@ -8,4 +8,8 @@ public interface KeyGenerationWebService {
     @GET
     @Path("/key")
     GetKeyResponse getKey();
+
+    @GET
+    @Path("/generate")
+    void generate();
 }
