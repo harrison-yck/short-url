@@ -58,7 +58,7 @@ public class KeyService {
         List<KeyEntity> entities = Lists.newArrayList();
         for (long i = start; i <= end; i++) {
             var entity = new KeyEntity();
-            entity.id = new ObjectId(String.valueOf(i));
+            entity.id = new ObjectId(Long.toHexString(i));
             entity.length = KEY_LENGTH;
             entity.incrementalKey = i;
             entity.url = generator.generate(i, KEY_LENGTH);
