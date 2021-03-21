@@ -38,6 +38,13 @@ spec:
               port: 8443
             initialDelaySeconds: 5
             timeoutSeconds: 3
+          resources:
+            requests:
+              cpu: 200m
+              memory: 384Mi
+            limits:
+              cpu: 1000m
+              memory: 384Mi
 ---
 apiVersion: v1
 kind: Service
