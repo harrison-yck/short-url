@@ -9,7 +9,8 @@ $(document).ready(function () {
             console.log(response.success);
 
             if (response.success) {
-                $("div#output").append("<div>Original Url: " + $("#originalUrl") + "<br/>Shorten Url: " + response.result + "</div>");
+                let url = location.host + '/' + response.result;
+                $("#originalUrl").val(url).select();
             } else {
                 alert("An error occurred, please try again");
             }
