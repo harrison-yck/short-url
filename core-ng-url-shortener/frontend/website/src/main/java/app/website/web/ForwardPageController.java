@@ -6,7 +6,6 @@ import app.api.url.ResolveUrlResponse;
 import core.framework.cache.Cache;
 import core.framework.http.ContentType;
 import core.framework.inject.Inject;
-import core.framework.template.HTMLTemplateEngine;
 import core.framework.util.Files;
 import core.framework.util.Strings;
 import core.framework.web.Controller;
@@ -16,14 +15,10 @@ import core.framework.web.site.WebDirectory;
 
 import java.nio.file.Path;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 public class ForwardPageController implements Controller {
     private final Path failedTemplate;
     private final Path homePage;
 
-    @Inject
-    HTMLTemplateEngine htmlTemplateEngine;
     @Inject
     Cache<ResolveUrlResponse> resolveUrlResponseCache;
     @Inject
@@ -36,12 +31,12 @@ public class ForwardPageController implements Controller {
 
     @Override
     public Response execute(Request request) {
-        String redirectUrl = request.pathParam("url");
+        String url = request.pathParam("url");
 
-        if (redirectUrl == null || Strings.isBlank(redirectUrl)) Response.bytes(Files.bytes(homePage)).contentType(ContentType.TEXT_HTML);
+        if (url == null || Strings.isBlank(url)) Response.bytes(Files.bytes(homePage)).contentType(ContentType.TEXT_HTML);
 
         var resolveRequest = new ResolveUrlRequest();
-        resolveRequest.url = redirectUrl;
+        resolveRequest.url = url;
 
         ResolveUrlResponse resolveUrlResponse = resolveUrlResponseCache.get(resolveRequest.url, key -> {
             var response = new ResolveUrlResponse();
@@ -51,6 +46,6 @@ public class ForwardPageController implements Controller {
 
         return resolveUrlResponse.result == null
                 ? Response.bytes(Files.bytes(failedTemplate)).contentType(ContentType.TEXT_HTML)
-                : Response.bytes(htmlTemplateEngine.process(resolveUrlResponse.result, new Object()).getBytes(UTF_8)).contentType(ContentType.TEXT_HTML);
+                : Response.redirect(resolveUrlResponse.result);
     }
 }
