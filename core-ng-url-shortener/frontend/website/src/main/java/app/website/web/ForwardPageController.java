@@ -3,6 +3,7 @@ package app.website.web;
 import app.api.UrlWebService;
 import app.api.url.ResolveUrlRequest;
 import app.api.url.ResolveUrlResponse;
+import core.framework.api.http.HTTPStatus;
 import core.framework.cache.Cache;
 import core.framework.http.ContentType;
 import core.framework.inject.Inject;
@@ -46,6 +47,6 @@ public class ForwardPageController implements Controller {
 
         return resolveUrlResponse.result == null
                 ? Response.bytes(Files.bytes(failedTemplate)).contentType(ContentType.TEXT_HTML)
-                : Response.redirect(resolveUrlResponse.result);
+                : Response.redirect(resolveUrlResponse.result, HTTPStatus.PERMANENT_REDIRECT);
     }
 }
