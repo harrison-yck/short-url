@@ -7,7 +7,6 @@ import com.mongodb.client.model.Filters;
 import core.framework.inject.Inject;
 import core.framework.mongo.FindOne;
 import core.framework.mongo.MongoCollection;
-import org.bson.types.ObjectId;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -21,7 +20,6 @@ public class ShortUrlService {
 
     public ShortUrlEntity getEncodedUrl(EncodeUrlRequest request) {
         var entity = new ShortUrlEntity();
-        entity.id = new ObjectId();
         entity.originalUrl = request.url;
         entity.encodedUrl = keyGenerationWebService.getKey().key;
         entity.createdTime = ZonedDateTime.now();

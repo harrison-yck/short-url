@@ -15,7 +15,6 @@ import core.framework.mongo.Count;
 import core.framework.mongo.MongoCollection;
 import core.framework.mongo.Query;
 import org.assertj.core.util.Lists;
-import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,6 @@ public class KeyService {
         List<KeyEntity> entities = Lists.newArrayList();
         for (long i = start; i <= end; i++) {
             var entity = new KeyEntity();
-            entity.id = new ObjectId(String.format("%024X", i));
             entity.length = KEY_LENGTH;
             entity.incrementalKey = i;
             entity.url = generator.generate(i, KEY_LENGTH);
