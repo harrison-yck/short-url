@@ -11,7 +11,7 @@ import java.time.Duration;
 public class ShortUrlModule extends Module {
     @Override
     protected void initialize() {
-        cache().add(ResolveUrlResponse.class, Duration.ofHours(1));
+        cache().add(ResolveUrlResponse.class, Duration.ofDays(1));
 
         api().client(UrlWebService.class, requiredProperty("app.urlServiceURL"));
         api().service(ShortUrlAJAXService.class, bind(ShortUrlAJAXServiceImpl.class));

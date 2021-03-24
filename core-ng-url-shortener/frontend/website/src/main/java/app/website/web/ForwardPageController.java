@@ -7,7 +7,6 @@ import core.framework.cache.Cache;
 import core.framework.http.ContentType;
 import core.framework.inject.Inject;
 import core.framework.util.Files;
-import core.framework.util.Strings;
 import core.framework.web.Controller;
 import core.framework.web.Request;
 import core.framework.web.Response;
@@ -19,7 +18,6 @@ import java.nio.file.Path;
 
 public class ForwardPageController implements Controller {
     private final Path failedTemplate;
-    private final Path homePage;
 
     @Inject
     Cache<ResolveUrlResponse> resolveUrlResponseCache;
@@ -27,23 +25,17 @@ public class ForwardPageController implements Controller {
     UrlWebService urlWebService;
 
     public ForwardPageController(WebDirectory webDirectory) {
-        homePage = webDirectory.path("/template/index.html");
         failedTemplate = webDirectory.path("/template/invalid.html");
     }
 
     @Override
     public Response execute(Request request) throws URISyntaxException {
-        String url = request.pathParam("url");
+        String encodedUrl = request.pathParam("url");
 
-        if (url == null || Strings.isBlank(url)) Response.bytes(Files.bytes(homePage)).contentType(ContentType.TEXT_HTML);
-
-        var resolveRequest = new ResolveUrlRequest();
-        resolveRequest.url = url;
-
-        ResolveUrlResponse resolveUrlResponse = resolveUrlResponseCache.get(resolveRequest.url, key -> {
-            var response = new ResolveUrlResponse();
-            ResolveUrlResponse resolvedResult = urlWebService.resolve(resolveRequest);
-            return resolvedResult == null ? null : response;
+        ResolveUrlResponse resolveUrlResponse = resolveUrlResponseCache.get(encodedUrl, key -> {
+            var resolveRequest = new ResolveUrlRequest();
+            resolveRequest.url = encodedUrl;
+            return urlWebService.resolve(resolveRequest); // maybe not in db, need to evict this cache when encodedUrl is inserted to db
         });
 
         return resolveUrlResponse.result == null

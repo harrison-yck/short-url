@@ -19,7 +19,8 @@ public class ShortUrlApp extends App {
         load(new SystemModule("sys.properties"));
         loadProperties("app.properties");
 
-        cache().add(ResolveUrlResponse.class, Duration.ofDays(30));
+        cache().add(ResolveUrlResponse.class, Duration.ofDays(1));
+
 
         MongoConfig mongo = config(MongoConfig.class);
         mongo.uri("mongodb://url-service-db:27017/url");
