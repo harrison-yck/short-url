@@ -28,7 +28,7 @@ public class WebsiteApp extends App {
 
         var homePageController = new HomePageController(bean(WebDirectory.class));
         http().route(GET, "/", homePageController::index);
-        http().route(GET, "/:url", bind(new ForwardPageController(bean(WebDirectory.class))));
+        http().route(GET, "/:url", bind(ForwardPageController.class));
 
         site().staticContent("/static").cache(Duration.ofHours(1));
         site().staticContent("/favicon.ico").cache(Duration.ofHours(1));
