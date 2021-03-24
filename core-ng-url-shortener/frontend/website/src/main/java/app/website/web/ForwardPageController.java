@@ -3,7 +3,6 @@ package app.website.web;
 import app.api.UrlWebService;
 import app.api.url.ResolveUrlRequest;
 import app.api.url.ResolveUrlResponse;
-import core.framework.api.http.HTTPStatus;
 import core.framework.cache.Cache;
 import core.framework.http.ContentType;
 import core.framework.inject.Inject;
@@ -14,6 +13,8 @@ import core.framework.web.Request;
 import core.framework.web.Response;
 import core.framework.web.site.WebDirectory;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 public class ForwardPageController implements Controller {
@@ -31,7 +32,7 @@ public class ForwardPageController implements Controller {
     }
 
     @Override
-    public Response execute(Request request) {
+    public Response execute(Request request) throws URISyntaxException {
         String url = request.pathParam("url");
 
         if (url == null || Strings.isBlank(url)) Response.bytes(Files.bytes(homePage)).contentType(ContentType.TEXT_HTML);
@@ -47,6 +48,12 @@ public class ForwardPageController implements Controller {
 
         return resolveUrlResponse.result == null
                 ? Response.bytes(Files.bytes(failedTemplate)).contentType(ContentType.TEXT_HTML)
-                : Response.redirect(resolveUrlResponse.result, HTTPStatus.PERMANENT_REDIRECT);
+                : Response.redirect(redirectUrl(resolveUrlResponse.result));
+    }
+
+    private String redirectUrl(String url) throws URISyntaxException {
+        URI uri = new URI(url);
+        String domain = uri.getHost();
+        return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 }
