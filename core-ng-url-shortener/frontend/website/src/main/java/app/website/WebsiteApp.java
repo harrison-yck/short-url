@@ -1,5 +1,6 @@
 package app.website;
 
+import app.website.web.ForwardAction;
 import app.website.web.ForwardPageController;
 import app.website.web.HomePageController;
 import core.framework.module.App;
@@ -24,7 +25,8 @@ public class WebsiteApp extends App {
         http().gzip();
         site().security();
 
-        bind(HTMLTemplateEngine.class);
+        HTMLTemplateEngine engine = bind(HTMLTemplateEngine.class);
+        engine.add("template/forward.html", ForwardAction.class);
 
         var homePageController = new HomePageController(bean(WebDirectory.class));
         http().route(GET, "/", homePageController::index);
