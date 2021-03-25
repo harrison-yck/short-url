@@ -17,14 +17,14 @@ import java.nio.file.Path;
 public class ForwardPageController implements Controller {
     private final Path failedTemplate;
 
-    public ForwardPageController(WebDirectory webDirectory) {
-        this.failedTemplate = webDirectory.path("/template/index.html");
-    }
-
     @Inject
     Cache<ResolveUrlResponse> resolveUrlResponseCache;
     @Inject
     UrlWebService urlWebService;
+
+    public ForwardPageController(WebDirectory webDirectory) {
+        this.failedTemplate = webDirectory.path("/template/index.html");
+    }
 
     @Override
     public Response execute(Request request) {
@@ -35,9 +35,6 @@ public class ForwardPageController implements Controller {
             resolveRequest.url = encodedUrl;
             return urlWebService.resolve(resolveRequest); // maybe not in db, need to evict this cache when encodedUrl is inserted to db
         });
-
-        var action = new ForwardAction();
-        action.action = "0; url=" + redirectUrl(resolveUrlResponse.result);
 
         return resolveUrlResponse.result == null
                 ? Response.bytes(Files.bytes(failedTemplate)).contentType(ContentType.TEXT_HTML)
