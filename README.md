@@ -19,8 +19,8 @@
 
 
 ## How To Use
-1. Create a kubernetes (K8s) cluster * (it is possible to use other orchestration engine, but you might need to prepare resource files by yourself).
-2. Start the cluster (command: minikube start)
+1. Turn on Docker and create a kubernetes (K8s) cluster * (it is possible to use other orchestration engine, but you might need to prepare resource files by yourself).
+2. Start cluster (command: minikube start)
 3. Mount data and datalog directory for zookeeper (command: minikube mount PATH_TO/data:/data, minikube mount PATH_TO/datalog:/datalog)
 4. Apply yaml files in kube directory to create kubernetes resources (command: kubectl apply --recursive -f PATH_TO/kube)
 5. Port forward website to localhost (command: kubectl port-forward deploy/website 8443:8443)
