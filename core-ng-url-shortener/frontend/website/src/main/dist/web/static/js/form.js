@@ -9,7 +9,7 @@ $(document).ready(function () {
             console.log(response.success);
 
             if (response.success) {
-                let url = location.host + '/' + response.result;
+                let url = "https://" + location.host + '/' + response.result;
                 $("#originalUrl").val(url).select();
             } else {
                 alert("An error occurred, please try again");

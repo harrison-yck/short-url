@@ -13,9 +13,4 @@ public class KeyGenerationWebServiceImpl implements KeyGenerationWebService {
     public GetKeyResponse getKey() {
         return keyService.getKey();
     }
-
-    @Override
-    public void generate() {
-        keyService.generateKeys();
-    }
 }

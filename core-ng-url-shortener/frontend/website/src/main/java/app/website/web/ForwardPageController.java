@@ -11,8 +11,6 @@ import core.framework.web.Controller;
 import core.framework.web.Request;
 import core.framework.web.Response;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 public class ForwardPageController implements Controller {
@@ -27,7 +25,7 @@ public class ForwardPageController implements Controller {
     UrlWebService urlWebService;
 
     @Override
-    public Response execute(Request request) throws URISyntaxException {
+    public Response execute(Request request) {
         String encodedUrl = request.pathParam("url");
 
         ResolveUrlResponse resolveUrlResponse = resolveUrlResponseCache.get(encodedUrl, key -> {
@@ -44,9 +42,7 @@ public class ForwardPageController implements Controller {
                 : Response.bytes(htmlTemplateEngine.process(FORWARD_TEMPLATE, action).getBytes(StandardCharsets.UTF_8)).contentType(ContentType.TEXT_HTML);
     }
 
-    private String redirectUrl(String url) throws URISyntaxException {
-        URI uri = new URI(url);
-        String domain = uri.getHost();
-        return domain.startsWith("www.") ? domain.substring(4) : domain;
+    private String redirectUrl(String url) {
+        return url.startsWith("www.") ? url.substring(4) : url;
     }
 }
