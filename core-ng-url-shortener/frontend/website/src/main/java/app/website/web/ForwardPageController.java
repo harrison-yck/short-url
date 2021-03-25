@@ -50,6 +50,6 @@ public class ForwardPageController implements Controller {
     }
 
     private String redirectUrl(String url) {
-        return url.startsWith("www.") ? url.substring(4) : url;
+        return url.startsWith("www.") ? "https://" + url.substring(4) : "https://" + url;
     }
 }
