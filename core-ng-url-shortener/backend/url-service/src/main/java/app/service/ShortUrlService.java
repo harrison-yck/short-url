@@ -7,6 +7,7 @@ import com.mongodb.client.model.Filters;
 import core.framework.inject.Inject;
 import core.framework.mongo.FindOne;
 import core.framework.mongo.MongoCollection;
+import core.framework.util.Strings;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -23,6 +24,9 @@ public class ShortUrlService {
         entity.originalUrl = request.url;
         entity.encodedUrl = keyGenerationWebService.getKey().key;
         entity.createdTime = ZonedDateTime.now();
+
+        if (entity.encodedUrl == null || Strings.isBlank(entity.encodedUrl)) throw new Error("Generate short url failed, please try again");
+
         collection.insert(entity);
         return entity;
     }

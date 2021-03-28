@@ -69,7 +69,7 @@ public class KeyService {
     public GetKeyResponse getKey() {
         // framework doesn't implement FindOneAndUpdateOptions,
         // so use aggregate sample to randomly pick one to reduce the chance of picking same entity
-        // and update the value using compare-and-set manner (used = TRUE) to avoid race condition
+        // and check returned row using compare-and-set manner (used = TRUE) to avoid race condition
         var aggregate = new Aggregate<KeyEntity>();
         aggregate.resultClass = KeyEntity.class;
         aggregate.pipeline = List.of(Aggregates.match(Filters.and(Filters.eq("length", KEY_LENGTH), Filters.eq("used", Boolean.FALSE))), Aggregates.sample(1));
@@ -81,9 +81,9 @@ public class KeyService {
         }
 
         KeyEntity keyEntity = keyEntities.get(0);
-        this.keyEntities.update(Filters.and(Filters.eq("id", keyEntity.id), Filters.eq("used", Boolean.FALSE)), Updates.set("used", Boolean.TRUE));
+        long updatedRow = this.keyEntities.update(Filters.and(Filters.eq("id", keyEntity.id), Filters.eq("used", Boolean.FALSE)), Updates.set("used", Boolean.TRUE));
 
-        if (needToGenerateKey()) publishGenerateKey();
+        if (updatedRow != 1) return new GetKeyResponse();
 
         var getKeyResponse = new GetKeyResponse();
         getKeyResponse.key = keyEntity.url;
